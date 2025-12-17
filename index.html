@@ -241,6 +241,7 @@
             padding: 10px;
             font-size: 12px;
             z-index: 1000;
+            display: none;
         }
         
         .sync-btn {
@@ -352,7 +353,7 @@
     </div>
 
     <!-- Панель статуса синхронизации -->
-    <div class="sync-status" id="syncStatus" style="display:none;">
+    <div class="sync-status" id="syncStatus">
         <div id="syncMessage">● ГОТОВО К СИНХРОНИЗАЦИИ</div>
     </div>
 
@@ -389,22 +390,22 @@
             autoSync: false
         };
         
-        // Инициализация
-        document.addEventListener('DOMContentLoaded', function() {
+        // Основная функция инициализации
+        function init() {
             loadConfig();
             loadLocalData();
             setupEventListeners();
             updateDateTime();
             setInterval(updateDateTime, 1000);
             
-            // Проверка GitHub конфигурации
-            setTimeout(checkGitHubConfig, 1000);
-            
             // Подсказка пароля
             setTimeout(() => {
-                document.getElementById('accessCodeHint').textContent = "Подсказка: Событие 'Шифр Зима'";
+                const hintEl = document.getElementById('accessCodeHint');
+                if (hintEl) {
+                    hintEl.textContent = "Подсказка: Событие 'Шифр Зима'";
+                }
             }, 3000);
-        });
+        }
         
         // Загрузить конфигурацию
         function loadConfig() {
@@ -528,7 +529,8 @@
                 document.getElementById('loginScreen').style.display = 'block';
                 document.getElementById('mainInterface').style.display = 'none';
                 document.getElementById('passwordInput').value = '';
-                document.getElementById('errorMsg').textContent = '';
+                const errorMsg = document.getElementById('errorMsg');
+                if (errorMsg) errorMsg.textContent = '';
                 document.getElementById('passwordInput').focus();
             }
         }
@@ -541,25 +543,30 @@
             });
             
             const content = document.getElementById('content');
+            if (!content) return;
             
             switch(section) {
                 case 'logs':
-                    document.getElementById('navLogs').style.backgroundColor = '#2A2A2A';
+                    const navLogs = document.getElementById('navLogs');
+                    if (navLogs) navLogs.style.backgroundColor = '#2A2A2A';
                     showLogsSection();
                     break;
                     
                 case 'add':
-                    document.getElementById('navAdd').style.backgroundColor = '#2A2A2A';
+                    const navAdd = document.getElementById('navAdd');
+                    if (navAdd) navAdd.style.backgroundColor = '#2A2A2A';
                     showAddSection();
                     break;
                     
                 case 'sync':
-                    document.getElementById('navSync').style.backgroundColor = '#2A2A2A';
+                    const navSync = document.getElementById('navSync');
+                    if (navSync) navSync.style.backgroundColor = '#2A2A2A';
                     showSyncSection();
                     break;
                     
                 case 'config':
-                    document.getElementById('navConfig').style.backgroundColor = '#2A2A2A';
+                    const navConfig = document.getElementById('navConfig');
+                    if (navConfig) navConfig.style.backgroundColor = '#2A2A2A';
                     showConfigSection();
                     break;
             }
@@ -567,6 +574,9 @@
         
         // Раздел с записями
         function showLogsSection() {
+            const content = document.getElementById('content');
+            if (!content) return;
+            
             let html = `<h3>● АРХИВНЫЕ ЗАПИСИ (${archiveData.logs.length})</h3>`;
             
             if (archiveData.logs.length === 0) {
@@ -610,11 +620,14 @@
                 </div>
             `;
             
-            document.getElementById('content').innerHTML = html;
+            content.innerHTML = html;
         }
         
         // Раздел добавления
         function showAddSection() {
+            const content = document.getElementById('content');
+            if (!content) return;
+            
             const today = getCurrentDate();
             
             const html = `
@@ -648,11 +661,14 @@
                 </div>
             `;
             
-            document.getElementById('content').innerHTML = html;
+            content.innerHTML = html;
         }
         
         // Раздел синхронизации
         function showSyncSection() {
+            const content = document.getElementById('content');
+            if (!content) return;
+            
             const syncHistoryHtml = archiveData.syncHistory.length > 0 ?
                 archiveData.syncHistory.map(entry => `
                     <div style="border-bottom: 1px dashed #2A2A2A; padding: 5px 0;">
@@ -701,12 +717,15 @@
                 </div>
             `;
             
-            document.getElementById('content').innerHTML = html;
+            content.innerHTML = html;
             setTimeout(checkGitHubConfig, 100);
         }
         
         // Раздел настроек GitHub
         function showConfigSection() {
+            const content = document.getElementById('content');
+            if (!content) return;
+            
             const html = `
                 <h3>⚙ НАСТРОЙКИ ГИТХАБ API</h3>
                 
@@ -767,7 +786,7 @@
                 </div>
             `;
             
-            document.getElementById('content').innerHTML = html;
+            content.innerHTML = html;
         }
         
         // Добавить новую запись
@@ -814,12 +833,12 @@
         
         // Получить данные записи из формы
         function getLogFromForm() {
-            const title = document.getElementById('newTitle').value.trim();
-            const date = document.getElementById('newDate').value.trim();
-            const content = document.getElementById('newContent').value.trim();
-            const author = document.getElementById('newAuthor').value.trim();
-            const priority = document.getElementById('newPriority').value;
-            const tagsInput = document.getElementById('newTags').value.trim();
+            const title = document.getElementById('newTitle')?.value.trim();
+            const date = document.getElementById('newDate')?.value.trim();
+            const content = document.getElementById('newContent')?.value.trim();
+            const author = document.getElementById('newAuthor')?.value.trim();
+            const priority = document.getElementById('newPriority')?.value;
+            const tagsInput = document.getElementById('newTags')?.value.trim();
             
             if (!title || !content) {
                 alert("Заполните заголовок и содержание!");
@@ -867,22 +886,29 @@
         
         // Очистить форму добавления
         function clearAddForm() {
-            document.getElementById('newTitle').value = '';
-            document.getElementById('newContent').value = '';
-            document.getElementById('newAuthor').value = '';
-            document.getElementById('newTags').value = '';
-            document.getElementById('newDate').value = getCurrentDate();
-            document.getElementById('newPriority').value = 'NORMAL';
+            const title = document.getElementById('newTitle');
+            const content = document.getElementById('newContent');
+            const author = document.getElementById('newAuthor');
+            const tags = document.getElementById('newTags');
+            const date = document.getElementById('newDate');
+            const priority = document.getElementById('newPriority');
+            
+            if (title) title.value = '';
+            if (content) content.value = '';
+            if (author) author.value = '';
+            if (tags) tags.value = '';
+            if (date) date.value = getCurrentDate();
+            if (priority) priority.value = 'NORMAL';
         }
         
         // Сохранить настройки GitHub
         function saveGitHubConfig() {
             githubConfig = {
-                token: document.getElementById('configToken').value.trim(),
-                username: document.getElementById('configUsername').value.trim(),
-                repo: document.getElementById('configRepo').value.trim(),
-                branch: document.getElementById('configBranch').value.trim() || 'main',
-                enabled: document.getElementById('configEnabled').checked
+                token: document.getElementById('configToken')?.value.trim() || "",
+                username: document.getElementById('configUsername')?.value.trim() || "",
+                repo: document.getElementById('configRepo')?.value.trim() || "",
+                branch: document.getElementById('configBranch')?.value.trim() || 'main',
+                enabled: document.getElementById('configEnabled')?.checked || false
             };
             
             saveConfig();
@@ -908,11 +934,17 @@
                 };
                 saveConfig();
                 
-                document.getElementById('configToken').value = '';
-                document.getElementById('configUsername').value = '';
-                document.getElementById('configRepo').value = '';
-                document.getElementById('configBranch').value = 'main';
-                document.getElementById('configEnabled').checked = false;
+                const token = document.getElementById('configToken');
+                const username = document.getElementById('configUsername');
+                const repo = document.getElementById('configRepo');
+                const branch = document.getElementById('configBranch');
+                const enabled = document.getElementById('configEnabled');
+                
+                if (token) token.value = '';
+                if (username) username.value = '';
+                if (repo) repo.value = '';
+                if (branch) branch.value = 'main';
+                if (enabled) enabled.checked = false;
                 
                 updateSyncMode();
                 showSyncMessage("Настройки GitHub очищены", 'warning');
@@ -924,6 +956,9 @@
             const statusEl = document.getElementById('githubStatus');
             const modeEl = document.getElementById('currentSyncMode');
             const repoStatusEl = document.getElementById('repoStatus');
+            const syncModeEl = document.getElementById('syncMode');
+            
+            if (!statusEl || !modeEl || !repoStatusEl || !syncModeEl) return;
             
             if (!githubConfig.enabled || !githubConfig.token || !githubConfig.repo) {
                 statusEl.textContent = "● ОТКЛЮЧЕНО";
@@ -931,7 +966,7 @@
                 modeEl.textContent = "ОТКЛЮЧЕН";
                 repoStatusEl.textContent = "● ЛОКАЛЬНЫЙ";
                 repoStatusEl.style.color = "#FF0000";
-                document.getElementById('syncMode').textContent = "ЛОКАЛЬНЫЙ";
+                syncModeEl.textContent = "ЛОКАЛЬНЫЙ";
                 return;
             }
             
@@ -965,10 +1000,15 @@
                     const statusEl = document.getElementById('githubStatus');
                     const repoStatusEl = document.getElementById('repoStatus');
                     
-                    statusEl.textContent = "● ПОДКЛЮЧЕНО";
-                    statusEl.style.color = "#00FF00";
-                    repoStatusEl.textContent = `● ${githubConfig.repo}`;
-                    repoStatusEl.style.color = "#00FF00";
+                    if (statusEl) {
+                        statusEl.textContent = "● ПОДКЛЮЧЕНО";
+                        statusEl.style.color = "#00FF00";
+                    }
+                    
+                    if (repoStatusEl) {
+                        repoStatusEl.textContent = `● ${githubConfig.repo}`;
+                        repoStatusEl.style.color = "#00FF00";
+                    }
                     
                     updateSyncMode();
                     showSyncMessage(`Подключение успешно: ${data.full_name}`, 'success');
@@ -980,8 +1020,10 @@
                 showSyncMessage(`Ошибка подключения: ${error.message}`, 'error');
                 
                 const statusEl = document.getElementById('githubStatus');
-                statusEl.textContent = "● ОШИБКА";
-                statusEl.style.color = "#FF0000";
+                if (statusEl) {
+                    statusEl.textContent = "● ОШИБКА";
+                    statusEl.style.color = "#FF0000";
+                }
                 
                 return false;
             }
@@ -1245,6 +1287,8 @@
             const statusEl = document.getElementById('syncStatus');
             const messageEl = document.getElementById('syncMessage');
             
+            if (!statusEl || !messageEl) return;
+            
             statusEl.style.display = 'block';
             messageEl.textContent = `● ${message}`;
             
@@ -1281,18 +1325,25 @@
         
         // Обновить счетчик записей
         function updateLogsCount() {
-            document.getElementById('logsCount').textContent = archiveData.logs.length;
+            const logsCountEl = document.getElementById('logsCount');
+            if (logsCountEl) {
+                logsCountEl.textContent = archiveData.logs.length;
+            }
         }
         
         // Обновить время последней синхронизации
         function updateLastSyncTime() {
-            document.getElementById('lastSync').textContent = 
-                syncState.lastSync ? 
-                new Date(syncState.lastSync).toLocaleDateString('ru-RU') : 
-                'НИКОГДА';
+            const lastSyncEl = document.getElementById('lastSync');
+            if (lastSyncEl) {
+                lastSyncEl.textContent = 
+                    syncState.lastSync ? 
+                    new Date(syncState.lastSync).toLocaleDateString('ru-RU') : 
+                    'НИКОГДА';
+            }
             
-            if (document.getElementById('lastSyncDetail')) {
-                document.getElementById('lastSyncDetail').textContent = 
+            const lastSyncDetailEl = document.getElementById('lastSyncDetail');
+            if (lastSyncDetailEl) {
+                lastSyncDetailEl.textContent = 
                     syncState.lastSync ? 
                     new Date(syncState.lastSync).toLocaleString() : 
                     'НИКОГДА';
@@ -1302,15 +1353,22 @@
         // Обновить режим синхронизации
         function updateSyncMode() {
             const mode = githubConfig.enabled ? "СИНХРОНИЗАЦИЯ С ГИТХАБ" : "ЛОКАЛЬНЫЙ";
-            document.getElementById('syncMode').textContent = mode;
+            const syncModeEl = document.getElementById('syncMode');
+            const currentSyncModeEl = document.getElementById('currentSyncMode');
+            
+            if (syncModeEl) syncModeEl.textContent = mode;
+            if (currentSyncModeEl) currentSyncModeEl.textContent = githubConfig.enabled ? 'АКТИВЕН' : 'ОТКЛЮЧЕН';
         }
         
         // Обновить дату и время
         function updateDateTime() {
             const now = new Date();
             const timeStr = now.toLocaleTimeString('ru-RU', { hour12: false });
+            const timeEl = document.getElementById('currentTime');
             
-            document.getElementById('currentTime').textContent = timeStr;
+            if (timeEl) {
+                timeEl.textContent = timeStr;
+            }
         }
         
         // Получить текущую дату
@@ -1330,11 +1388,14 @@
         // Настройка обработчиков событий
         function setupEventListeners() {
             // Ввод пароля по Enter
-            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    checkPassword();
-                }
-            });
+            const passwordInput = document.getElementById('passwordInput');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
+            }
             
             // Анимация тряски при ошибке
             const style = document.createElement('style');
@@ -1346,6 +1407,13 @@
                 }
             `;
             document.head.appendChild(style);
+        }
+        
+        // Запуск инициализации после загрузки DOM
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
         }
     </script>
 </body>
