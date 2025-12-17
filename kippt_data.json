@@ -1,58 +1,36 @@
 {
-  "logs": [],
-  "lastModified": "2025-12-17T13:39:01.660Z",
+  "logs": [
+    {
+      "id": "KIPPT_mj9vpfh9w39a1",
+      "title": "ИНСТРУКЦИЯ: РАБОТА С СИНХРОНИЗАЦИЕЙ",
+      "date": "17/12/2025",
+      "content": "1. Настройте доступ к GitHub в разделе 'НАСТРОЙКИ ГИТХАБ'\n2. Укажите Personal Access Token, имя пользователя и репозиторий\n3. Используйте кнопку 'СИНХРОНИЗИРОВАТЬ' для загрузки/выгрузки данных\n4. Все записи хранятся в файле kippt_data.json в репозитории\n5. Рекомендуется синхронизировать данные после каждого изменения",
+      "tags": [
+        "ИНСТРУКЦИЯ",
+        "СИНХРОНИЗАЦИЯ",
+        "ГИТХАБ"
+      ],
+      "author": "СИСТЕМНЫЙ АДМИНИСТРАТОР",
+      "priority": "MEDIUM"
+    }
+  ],
+  "lastModified": "2025-12-17T16:37:19.569Z",
   "version": "2.0",
   "syncHistory": [
     {
-      "timestamp": "2025-12-17T13:38:59.176Z",
+      "timestamp": "2025-12-17T13:39:18.677Z",
       "action": "PUSH",
       "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
+      "message": "kippt_data.json does not match 51c2aff87dd815842678b50c883d27109f29eb01"
     },
     {
-      "timestamp": "2025-12-17T13:38:58.226Z",
-      "action": "PUSH",
-      "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
+      "timestamp": "2025-12-17T13:39:12.079Z",
+      "action": "FORCE_RESYNC",
+      "success": true,
+      "message": "Полная пересинхронизация"
     },
     {
-      "timestamp": "2025-12-17T13:38:57.057Z",
-      "action": "PUSH",
-      "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
-    },
-    {
-      "timestamp": "2025-12-17T13:38:39.178Z",
-      "action": "PUSH",
-      "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
-    },
-    {
-      "timestamp": "2025-12-17T13:38:36.073Z",
-      "action": "PUSH",
-      "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
-    },
-    {
-      "timestamp": "2025-12-17T13:38:33.521Z",
-      "action": "PUSH",
-      "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
-    },
-    {
-      "timestamp": "2025-12-17T13:38:31.479Z",
-      "action": "PUSH",
-      "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
-    },
-    {
-      "timestamp": "2025-12-17T13:38:29.298Z",
-      "action": "PUSH",
-      "success": false,
-      "message": "kippt_data.json does not match e6a02a67ad2ce52c4673ece92aba3b715111ae14"
-    },
-    {
-      "timestamp": "2025-12-17T13:38:12.132Z",
+      "timestamp": "2025-12-17T13:33:13.840Z",
       "action": "FORCE_RESYNC",
       "success": true,
       "message": "Полная пересинхронизация"
