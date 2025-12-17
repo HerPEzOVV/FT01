@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ГНК КИППТ :: ФАНТОМ-ТЕРМИНАЛ</title>
-    <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" type="text/css">
     <style>
         * {
             margin: 0;
@@ -21,7 +20,7 @@
             position: relative;
         }
 
-        /* Эффект зернистости */
+        /* Эффект зернистости старого монитора */
         body::before {
             content: '';
             position: absolute;
@@ -97,6 +96,7 @@
             z-index: 2;
         }
 
+        /* Контейнер для фразы */
         .phrase-container {
             margin: 30px 0;
             min-height: 150px;
@@ -118,9 +118,18 @@
             transform: translateY(10px);
         }
 
-        #phrase-line1 { color: #66d9ff; }
-        #phrase-line2 { color: #2a7fff; }
-        #phrase-line3 { color: #a0d2ff; }
+        /* Цвета для каждой строки */
+        #phrase-line1 {
+            color: #66d9ff;
+        }
+
+        #phrase-line2 {
+            color: #2a7fff;
+        }
+
+        #phrase-line3 {
+            color: #a0d2ff;
+        }
 
         /* Эффект глитча */
         @keyframes glitch1 {
@@ -153,6 +162,7 @@
             animation-timing-function: linear;
         }
 
+        /* Типографский эффект */
         .typewriter {
             overflow: hidden;
             border-right: 3px solid;
@@ -212,7 +222,9 @@
         }
 
         @keyframes shine {
-            100% { left: 150%; }
+            100% {
+                left: 150%;
+            }
         }
 
         .boot-footer {
@@ -226,664 +238,586 @@
             text-shadow: 0 0 3px rgba(0, 20, 40, 0.8);
         }
 
-        /* Экран пароля */
-        #password-screen {
+        /* Модальное окно пароля для файлового менеджера */
+        .password-modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #050d17 0%, #0a1a2f 100%);
-            display: none;
-            flex-direction: column;
+            background-color: rgba(5, 13, 23, 0.95);
+            z-index: 2000;
             justify-content: center;
             align-items: center;
-            z-index: 1500;
-            color: #66d9ff;
         }
 
         .password-container {
-            background: rgba(7, 21, 40, 0.9);
+            background: linear-gradient(145deg, #071528, #0a1a2f);
             padding: 40px;
             border-radius: 10px;
             border: 2px solid #1a5fb4;
-            box-shadow: 0 0 30px rgba(26, 95, 180, 0.5);
+            box-shadow: 
+                0 0 30px rgba(26, 95, 180, 0.6),
+                inset 0 0 20px rgba(10, 26, 47, 0.8);
             max-width: 500px;
             width: 90%;
             text-align: center;
         }
 
         .password-title {
-            font-size: 28px;
-            margin-bottom: 10px;
             color: #66d9ff;
+            font-size: 24px;
+            margin-bottom: 25px;
             text-shadow: 0 0 10px rgba(102, 217, 255, 0.7);
-            letter-spacing: 2px;
+            border-bottom: 2px solid #1a5fb4;
+            padding-bottom: 10px;
         }
 
-        .password-subtitle {
-            color: #a0d2ff;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-
-        #password-input {
-            background: #071528;
-            border: 2px solid #0a2844;
-            color: #66d9ff;
-            padding: 15px;
-            font-size: 18px;
+        .password-input {
             width: 100%;
-            text-align: center;
-            border-radius: 5px;
+            padding: 15px;
+            background-color: #071528;
+            border: 1px solid #0a2844;
+            color: #66d9ff;
+            font-size: 18px;
             margin-bottom: 20px;
+            border-radius: 5px;
+            text-align: center;
             letter-spacing: 2px;
-            transition: all 0.3s;
         }
 
-        #password-input:focus {
+        .password-input:focus {
             outline: none;
             border-color: #66d9ff;
-            box-shadow: 0 0 15px rgba(102, 217, 255, 0.3);
+            box-shadow: 0 0 10px rgba(102, 217, 255, 0.5);
         }
 
-        #password-error {
-            color: #ff5252;
-            height: 20px;
-            margin-bottom: 20px;
-            font-size: 14px;
+        .password-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
         }
 
         .password-btn {
+            padding: 12px 30px;
             background: linear-gradient(90deg, #0a2844, #0f3c66);
             color: #66d9ff;
             border: 1px solid #0a2844;
-            padding: 12px 40px;
-            font-size: 16px;
-            cursor: pointer;
             border-radius: 5px;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s;
+            cursor: pointer;
             font-weight: bold;
+            transition: all 0.3s;
+            min-width: 120px;
         }
 
         .password-btn:hover {
             background: linear-gradient(90deg, #0f3c66, #145a8f);
             border-color: #66d9ff;
-            box-shadow: 0 0 15px rgba(102, 217, 255, 0.5);
+            box-shadow: 0 0 10px rgba(102, 217, 255, 0.4);
         }
 
-        .password-note {
-            margin-top: 25px;
-            color: #4a8ccf;
-            font-size: 12px;
-            line-height: 1.4;
+        .password-btn:active {
+            transform: translateY(2px);
         }
 
-        /* Терминал */
+        .password-error {
+            color: #ff5252;
+            margin-top: 15px;
+            min-height: 20px;
+            font-size: 14px;
+        }
+
+        /* Терминал (старый лейаут) */
         #terminal {
             display: none;
-            min-height: 100vh;
+            width: 100%;
+            height: 100vh;
             background-color: #050d17;
-            color: #66d9ff;
             padding: 20px;
             position: relative;
-            overflow-x: hidden;
-        }
-
-        .terminal-container {
-            max-width: 1400px;
-            margin: 0 auto;
+            overflow: hidden;
         }
 
         .terminal-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            padding: 15px 0;
-            border-bottom: 2px solid #0a2844;
-            margin-bottom: 25px;
-            position: relative;
-        }
-
-        .terminal-header::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent, #1a5fb4, transparent);
-        }
-
-        .logo-section {
-            display: flex;
             align-items: center;
-            gap: 15px;
+            border-bottom: 1px solid #1a5fb4;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
         }
 
-        .logo-text {
-            font-size: 32px;
+        .terminal-title {
             color: #66d9ff;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(102, 217, 255, 0.7);
-            letter-spacing: 1px;
+            font-size: 1.8rem;
+            text-shadow: 0 0 5px #1a5fb4;
         }
 
-        .system-info {
-            font-size: 14px;
+        .terminal-subtitle {
             color: #a0d2ff;
-            text-align: right;
-            max-width: 400px;
+            font-size: 1rem;
         }
 
-        .terminal-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 25px;
-            min-height: calc(100vh - 200px);
-        }
-
-        .main-content {
-            background: linear-gradient(145deg, #071528, #0a1a2f);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 
-                0 0 15px rgba(0, 20, 40, 0.7),
-                inset 0 0 10px rgba(10, 26, 47, 0.8);
-            border: 1px solid #0a2844;
-            overflow-y: auto;
-            max-height: calc(100vh - 250px);
-            position: relative;
-        }
-
-        .main-content::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, #1a5fb4, transparent);
-        }
-
-        .sidebar {
+        .terminal-status {
             display: flex;
-            flex-direction: column;
-            gap: 25px;
-        }
-
-        .panel {
-            background: linear-gradient(145deg, #071528, #0a1a2f);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 
-                0 0 15px rgba(0, 20, 40, 0.7),
-                inset 0 0 10px rgba(10, 26, 47, 0.8);
-            border: 1px solid #0a2844;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-
-        .panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #66d9ff, transparent);
-        }
-
-        .panel-title {
-            color: #66d9ff;
-            margin-bottom: 15px;
-            font-weight: bold;
-            font-size: 18px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #0a2844;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .panel-title::before {
-            content: '>';
-            color: #1a5fb4;
-            font-weight: bold;
-        }
-
-        .system-status {
-            min-height: 160px;
-        }
-
-        .status-items {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            margin-top: 10px;
+            gap: 15px;
         }
 
         .status-item {
             display: flex;
-            justify-content: space-between;
-            padding: 8px 10px;
-            background-color: rgba(10, 40, 68, 0.3);
-            border-radius: 4px;
-            font-size: 14px;
+            align-items: center;
+            gap: 5px;
         }
 
-        .status-label {
-            font-weight: bold;
-            color: #a0d2ff;
-        }
-
-        .status-value {
-            font-weight: bold;
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
         }
 
         .status-online {
-            color: #4caf50;
-        }
-
-        .status-offline {
-            color: #ff5252;
+            background-color: #00ff00;
+            box-shadow: 0 0 5px #00ff00;
         }
 
         .status-recovery {
-            color: #ff9800;
+            background-color: #ff9800;
+            box-shadow: 0 0 5px #ff9800;
+            animation: pulse 1.5s infinite;
         }
 
-        .guestbook {
+        .status-offline {
+            background-color: #ff5252;
+            box-shadow: 0 0 5px #ff5252;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .terminal-body {
             display: flex;
-            flex-direction: column;
-            height: 100%;
+            height: calc(100vh - 150px);
+            gap: 20px;
         }
 
-        .guestbook-entries {
-            flex-grow: 1;
-            overflow-y: auto;
-            max-height: 300px;
-            display: flex;
-            flex-direction: column-reverse;
-            gap: 12px;
-            padding-right: 5px;
+        .terminal-sidebar {
+            width: 250px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 15px;
+            border: 1px solid #1a5fb4;
         }
 
-        .guestbook-entry {
-            background-color: rgba(10, 40, 68, 0.3);
-            padding: 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            border-left: 3px solid #66d9ff;
-            position: relative;
-        }
-
-        .guestbook-entry::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            width: 3px;
-            background: linear-gradient(to bottom, #1a5fb4, #66d9ff);
-        }
-
-        .guestbook-entry strong {
+        .sidebar-title {
             color: #66d9ff;
-            display: block;
-            margin-bottom: 4px;
+            border-bottom: 1px solid #1a5fb4;
+            padding-bottom: 5px;
+            margin-bottom: 15px;
         }
 
-        .guestbook-form {
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .guestbook-form input,
-        .guestbook-form textarea {
-            background-color: #071528;
-            border: 1px solid #0a2844;
-            color: #66d9ff;
+        .menu-item {
             padding: 10px;
-            font-family: 'Courier New', monospace;
-            border-radius: 4px;
-            resize: none;
-            transition: border-color 0.3s;
-        }
-
-        .guestbook-form input:focus,
-        .guestbook-form textarea:focus {
-            outline: none;
-            border-color: #66d9ff;
-            box-shadow: 0 0 5px rgba(102, 217, 255, 0.3);
-        }
-
-        .guestbook-form button {
-            background: linear-gradient(90deg, #0a2844, #0f3c66);
-            color: #66d9ff;
-            border: 1px solid #0a2844;
-            padding: 10px 15px;
+            margin-bottom: 8px;
+            background-color: rgba(26, 95, 180, 0.1);
+            border-left: 3px solid transparent;
             cursor: pointer;
-            font-family: 'Courier New', monospace;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover {
+            background-color: rgba(26, 95, 180, 0.3);
+            border-left: 3px solid #66d9ff;
+        }
+
+        .menu-item.active {
+            background-color: rgba(26, 95, 180, 0.4);
+            border-left: 3px solid #66d9ff;
+        }
+
+        .file-manager-btn {
+            background: linear-gradient(90deg, #0a2844, #1a5fb4);
+            color: #66d9ff;
+            border: 1px solid #1a5fb4;
+            padding: 12px;
+            margin-top: 20px;
+            border-radius: 5px;
+            cursor: pointer;
             font-weight: bold;
-            border-radius: 4px;
+            text-align: center;
             transition: all 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 14px;
         }
 
-        .guestbook-form button:hover {
+        .file-manager-btn:hover {
+            background: linear-gradient(90deg, #1a5fb4, #2a7fff);
+            border-color: #66d9ff;
+            box-shadow: 0 0 10px rgba(102, 217, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .terminal-content {
+            flex: 1;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 20px;
+            overflow-y: auto;
+            border: 1px solid #1a5fb4;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+            animation: fadeInContent 0.5s ease-out;
+        }
+
+        @keyframes fadeInContent {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .content-title {
+            color: #66d9ff;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #1a5fb4;
+            padding-bottom: 5px;
+        }
+
+        .content-text {
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .typing-text {
+            overflow: hidden;
+            border-right: 2px solid #66d9ff;
+            white-space: nowrap;
+            margin: 0 auto;
+            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: #66d9ff }
+        }
+
+        .anomaly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .anomaly-card {
+            background-color: rgba(0, 0, 0, 0.5);
+            border: 1px solid #1a5fb4;
+            border-radius: 5px;
+            padding: 15px;
+            transition: all 0.3s;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: cardAppear 0.5s forwards;
+        }
+
+        .anomaly-card:nth-child(1) { animation-delay: 0.1s; }
+        .anomaly-card:nth-child(2) { animation-delay: 0.2s; }
+        .anomaly-card:nth-child(3) { animation-delay: 0.3s; }
+        
+        @keyframes cardAppear {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .anomaly-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(26, 95, 180, 0.3);
+        }
+
+        .anomaly-code {
+            color: #f1fa8c;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .anomaly-name {
+            color: #66d9ff;
+            margin: 8px 0;
+        }
+
+        .anomaly-desc {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .alert {
+            background-color: rgba(139, 0, 0, 0.2);
+            border: 1px solid #8B0000;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 15px 0;
+        }
+
+        .command-line {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #1a5fb4;
+        }
+
+        .command-prompt {
+            color: #00ff00;
+            margin-right: 10px;
+        }
+
+        .command-input {
+            background: transparent;
+            border: none;
+            color: #66d9ff;
+            font-size: 1rem;
+            width: calc(100% - 100px);
+            outline: none;
+        }
+
+        .glitch {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                rgba(10, 26, 47, 0.1) 50%,
+                rgba(26, 95, 180, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            z-index: -1;
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(102, 217, 255, 0.5);
+            box-shadow: 0 0 10px rgba(102, 217, 255, 0.7);
+            z-index: 999;
+            animation: scan 8s linear infinite;
+            display: none;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+
+        .terminal-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-top: 1px solid #1a5fb4;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        .blink {
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* Файловый менеджер (внутри контента) */
+        .filemanager-container {
+            display: none;
+        }
+
+        .filemanager-container.active {
+            display: block;
+        }
+
+        .fm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #0a2844;
+        }
+
+        .fm-title {
+            color: #66d9ff;
+            font-size: 24px;
+            text-shadow: 0 0 10px rgba(102, 217, 255, 0.5);
+        }
+
+        .fm-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .fm-btn {
+            padding: 8px 15px;
+            background: linear-gradient(90deg, #0a2844, #0f3c66);
+            color: #66d9ff;
+            border: 1px solid #0a2844;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .fm-btn:hover {
             background: linear-gradient(90deg, #0f3c66, #145a8f);
             border-color: #66d9ff;
             box-shadow: 0 0 8px rgba(102, 217, 255, 0.4);
         }
 
-        .scrolling-text {
-            background: linear-gradient(90deg, #0a2844, #071528);
-            color: #a0d2ff;
+        .fm-path {
+            background-color: rgba(10, 40, 68, 0.3);
             padding: 10px 15px;
-            margin-top: 10px;
-            border-radius: 4px;
-            overflow: hidden;
-            position: relative;
-            border: 1px solid #1a5fb4;
-            box-shadow: 0 0 8px rgba(26, 95, 180, 0.5);
-        }
-
-        .scrolling-content {
-            display: inline-block;
-            white-space: nowrap;
-            animation: scroll 25s linear infinite;
-            padding-right: 100%;
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-
-        .weather-info {
-            margin-top: auto;
-            padding-top: 15px;
-            border-top: 1px dashed #0a2844;
-        }
-
-        .weather-item {
-            display: flex;
-            justify-content: space-between;
-            margin: 6px 0;
-            font-size: 14px;
-        }
-
-        .weather-label {
-            color: #a0d2ff;
-        }
-
-        .counter {
-            background: linear-gradient(90deg, #0a2844, #071528);
-            padding: 15px;
-            border-radius: 6px;
-            text-align: center;
-            margin-top: 15px;
-            font-size: 22px;
-            color: #66d9ff;
-            font-weight: bold;
-            text-shadow: 0 0 8px rgba(102, 217, 255, 0.7);
-            border: 1px solid #1a5fb4;
-            box-shadow: 0 0 10px rgba(26, 95, 180, 0.3);
-        }
-
-        .classified {
-            color: #a0d2ff;
-            background-color: rgba(26, 95, 180, 0.2);
-            padding: 8px 15px;
-            border-radius: 4px;
-            margin: 15px 0;
-            border-left: 3px solid #1a5fb4;
-            font-weight: bold;
-            font-size: 18px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .classified::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, transparent, rgba(26, 95, 180, 0.1), transparent);
-            animation: classified-shine 3s infinite;
-        }
-
-        @keyframes classified-shine {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        .anomaly-list {
-            list-style-type: none;
-            margin: 15px 0;
-            padding-left: 10px;
-        }
-
-        .anomaly-list li {
-            margin: 8px 0;
-            padding: 8px 12px;
-            background-color: rgba(10, 40, 68, 0.2);
-            border-radius: 4px;
-            border-left: 2px solid #66d9ff;
-            font-size: 14px;
-        }
-
-        /* Стили для файлового менеджера */
-        .file-manager-section {
-            margin-top: 25px;
-        }
-
-        .file-manager-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #0a2844;
-        }
-
-        .file-manager-buttons {
-            display: flex;
-            gap: 10px;
-        }
-
-        .system-btn {
-            background: linear-gradient(90deg, #0a2844, #0f3c66);
-            color: #66d9ff;
-            border: 1px solid #0a2844;
-            padding: 10px 20px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-weight: bold;
-            border-radius: 4px;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 14px;
-        }
-
-        .system-btn:hover {
-            background: linear-gradient(90deg, #0f3c66, #145a8f);
-            border-color: #66d9ff;
-            box-shadow: 0 0 10px rgba(102, 217, 255, 0.5);
-        }
-
-        .system-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        #filemanager-container {
-            height: 400px;
-            border: 1px solid #0a2844;
             border-radius: 5px;
-            overflow: hidden;
-            background: #071528;
+            margin-bottom: 20px;
+            font-family: monospace;
+            border-left: 3px solid #1a5fb4;
         }
 
-        .file-manager-stats {
-            margin-top: 15px;
-            padding: 10px;
-            background: rgba(10, 40, 68, 0.3);
-            border-radius: 4px;
-            font-size: 14px;
-            display: flex;
-            justify-content: space-between;
+        .fm-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
         }
 
-        .stats-item {
+        .fm-item {
+            background: linear-gradient(145deg, #071528, #0a1a2f);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #0a2844;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             flex-direction: column;
             align-items: center;
+            text-align: center;
         }
 
-        .stats-value {
-            font-size: 18px;
-            font-weight: bold;
+        .fm-item:hover {
+            transform: translateY(-3px);
+            border-color: #66d9ff;
+            box-shadow: 0 5px 15px rgba(102, 217, 255, 0.2);
+        }
+
+        .fm-item.folder {
+            border-color: #2a7fff;
+        }
+
+        .fm-item.file {
+            border-color: #66d9ff;
+        }
+
+        .fm-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
             color: #66d9ff;
         }
 
-        .stats-label {
+        .fm-name {
+            color: #a0d2ff;
+            font-size: 14px;
+            word-break: break-all;
+            margin-bottom: 5px;
+        }
+
+        .fm-size {
+            color: #4a8ccf;
             font-size: 12px;
+        }
+
+        .fm-status {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: rgba(10, 40, 68, 0.3);
+            border-radius: 5px;
+            font-size: 14px;
             color: #a0d2ff;
         }
 
-        .footer {
-            text-align: center;
-            padding: 20px;
-            color: #4a8ccf;
-            font-size: 13px;
-            border-top: 1px solid #0a2844;
-            margin-top: 20px;
-            text-shadow: 0 0 3px rgba(0, 20, 40, 0.8);
+        /* Модальные окна файлового менеджера */
+        .fm-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(5, 13, 23, 0.9);
+            z-index: 1500;
+            justify-content: center;
+            align-items: center;
         }
 
-        /* Кастомные стили для Webix */
-        .webix_view {
-            background: #071528 !important;
-            color: #66d9ff !important;
+        .fm-modal-content {
+            background: linear-gradient(145deg, #071528, #0a1a2f);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid #1a5fb4;
+            box-shadow: 0 0 30px rgba(26, 95, 180, 0.6);
+            max-width: 500px;
+            width: 90%;
         }
 
-        .webix_header {
-            background: #0a2844 !important;
-            color: #66d9ff !important;
-            border-color: #1a5fb4 !important;
+        .fm-modal-title {
+            color: #66d9ff;
+            font-size: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #0a2844;
+            padding-bottom: 10px;
         }
 
-        .webix_list_item {
-            border-color: #0a2844 !important;
-            color: #a0d2ff !important;
+        .fm-modal-input {
+            width: 100%;
+            padding: 12px;
+            background-color: #071528;
+            border: 1px solid #0a2844;
+            color: #66d9ff;
+            margin-bottom: 20px;
+            border-radius: 5px;
         }
 
-        .webix_list_item.webix_selected {
-            background: #0f3c66 !important;
-            color: #66d9ff !important;
+        .fm-modal-input:focus {
+            outline: none;
+            border-color: #66d9ff;
+            box-shadow: 0 0 8px rgba(102, 217, 255, 0.3);
         }
 
-        .webix_toolbar {
-            background: #0a1a2f !important;
-            border-color: #0a2844 !important;
-        }
-
-        .webix_icon {
-            color: #66d9ff !important;
-        }
-
-        .webix_el_box {
-            background: #071528 !important;
-        }
-
-        .webix_el_button button {
-            background: #0a2844 !important;
-            color: #66d9ff !important;
-            border-color: #1a5fb4 !important;
-        }
-
-        /* Адаптивность */
-        @media (max-width: 1100px) {
-            .terminal-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .terminal-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 15px;
-            }
-            
-            .system-info {
-                text-align: left;
-                width: 100%;
-            }
-            
-            .phrase-line {
-                font-size: 28px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .phrase-line {
-                font-size: 24px;
-                letter-spacing: 2px;
-            }
-            
-            .logo-text {
-                font-size: 28px;
-            }
-            
-            .classified {
-                font-size: 16px;
-            }
-            
-            .panel-title {
-                font-size: 16px;
-            }
-            
-            .file-manager-buttons {
-                flex-direction: column;
-            }
-            
-            .system-btn {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .phrase-line {
-                font-size: 20px;
-            }
-            
-            .logo-text {
-                font-size: 24px;
-            }
-            
-            .password-container {
-                padding: 20px;
-            }
-            
-            .password-title {
-                font-size: 24px;
-            }
-            
-            .guestbook-form input,
-            .guestbook-form textarea {
-                font-size: 14px;
-            }
+        .fm-modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
         }
 
         /* Анимации */
@@ -900,6 +834,84 @@
 
         .fade-in-up {
             animation: fadeInUp 0.5s ease-out forwards;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 1100px) {
+            .terminal-body {
+                flex-direction: column;
+                height: auto;
+                min-height: calc(100vh - 200px);
+            }
+            
+            .terminal-sidebar {
+                width: 100%;
+                height: auto;
+            }
+            
+            .terminal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .terminal-status {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .phrase-line {
+                font-size: 28px;
+            }
+
+            .fm-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .phrase-line {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            
+            .terminal-title {
+                font-size: 1.5rem;
+            }
+            
+            .content-title {
+                font-size: 1.3rem;
+            }
+            
+            .anomaly-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .fm-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            }
+
+            .fm-controls {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .phrase-line {
+                font-size: 20px;
+            }
+            
+            .terminal-body {
+                flex-direction: column;
+            }
+            
+            .terminal-sidebar {
+                width: 100%;
+            }
+
+            .fm-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
@@ -925,207 +937,296 @@
         </div>
     </div>
 
-    <!-- Экран пароля -->
-    <div id="password-screen">
+    <!-- Модальное окно пароля для файлового менеджера -->
+    <div id="password-modal" class="password-modal">
         <div class="password-container">
-            <div class="password-title">ГНК КИППТ :: ДОСТУП</div>
-            <div class="password-subtitle">
-                > Система ФАНТОМ-ТЕРМИНАЛ v7.3.1<br>
-                > Требуется аутентификация уровня 3<br>
-                > Введите код доступа для продолжения
+            <div class="password-title">ДОСТУП К ФАЙЛОВОМУ МЕНЕДЖЕРУ</div>
+            <p style="color: #a0d2ff; margin-bottom: 20px; font-size: 14px;">
+                Введите пароль для доступа к защищенным файлам системы.<br>
+                Неверные попытки будут зафиксированы.
+            </p>
+            <input type="password" id="password-input" class="password-input" placeholder="Введите пароль доступа">
+            <div class="password-buttons">
+                <button id="password-submit" class="password-btn">ПОДТВЕРДИТЬ</button>
+                <button id="password-cancel" class="password-btn">ОТМЕНА</button>
             </div>
-            <input type="password" id="password-input" placeholder="ВВЕДИТЕ КОД ДОСТУПА" autocomplete="off">
-            <div id="password-error"></div>
-            <button class="password-btn" onclick="checkPassword()">ПОДТВЕРДИТЬ</button>
-            <div class="password-note">
-                Предупреждение: Несанкционированный доступ отслеживается и карается в соответствии с Уставом ГНК.<br>
-                Для демо-доступа используйте код: <strong>ГНК2025</strong>
+            <div id="password-error" class="password-error"></div>
+        </div>
+    </div>
+
+    <!-- Модальные окна файлового менеджера -->
+    <div id="fm-create-folder-modal" class="fm-modal">
+        <div class="fm-modal-content">
+            <div class="fm-modal-title">Создать папку</div>
+            <input type="text" id="fm-folder-name" class="fm-modal-input" placeholder="Название папки">
+            <div class="fm-modal-buttons">
+                <button id="fm-create-folder-cancel" class="fm-btn">Отмена</button>
+                <button id="fm-create-folder-submit" class="fm-btn">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fm-create-file-modal" class="fm-modal">
+        <div class="fm-modal-content">
+            <div class="fm-modal-title">Создать файл</div>
+            <input type="text" id="fm-file-name" class="fm-modal-input" placeholder="Название файла (с расширением)">
+            <textarea id="fm-file-content" class="fm-modal-input" rows="8" placeholder="Содержимое файла"></textarea>
+            <div class="fm-modal-buttons">
+                <button id="fm-create-file-cancel" class="fm-btn">Отмена</button>
+                <button id="fm-create-file-submit" class="fm-btn">Создать</button>
             </div>
         </div>
     </div>
 
     <!-- Терминал -->
     <div id="terminal">
-        <div class="terminal-container">
-            <div class="terminal-header">
-                <div class="logo-section">
-                    <div class="logo-text">ГНК КИППТ</div>
+        <div class="glitch"></div>
+        <div class="scanline" id="scanline"></div>
+        
+        <div class="terminal-header">
+            <div>
+                <div class="terminal-title">ФАНТОМ-ТЕРМИНАЛ v7.3.1</div>
+                <div class="terminal-subtitle">ГНК КИППТ • Уровень доступа: 4 • СИ-08</div>
+            </div>
+            <div class="terminal-status">
+                <div class="status-item">
+                    <div class="status-indicator status-online"></div>
+                    <span>ТЕНЕСКАН</span>
                 </div>
-                <div class="system-info">
-                    <div>Система: ФАНТОМ-ТЕРМИНАЛ v7.3.1</div>
-                    <div>Классификация: ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ</div>
-                    <div>Зона: СИ-08 (Ноквистский филиал)</div>
-                    <div>Дата: 17.12.2025 :: Время: <span id="current-time">09:45</span></div>
+                <div class="status-item">
+                    <div class="status-indicator status-recovery"></div>
+                    <span>НОКСОМ</span>
+                </div>
+                <div class="status-item">
+                    <div class="status-indicator status-online"></div>
+                    <span>ГЛОССАРИЙ</span>
                 </div>
             </div>
-
-            <div class="terminal-grid">
-                <div class="main-content">
-                    <div class="classified">СВОДНЫЙ ОТЧЁТ ПО ИНИЦИАТИВЕ «КИППТ»</div>
-                    <p><strong>Классификация:</strong> ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ</p>
-                    <p><strong>Дата экспорта:</strong> 17.12.2025</p>
-                    <p><strong>Статус:</strong> Концептуальное моделирование завершено. Сеттинг стабилен.</p>
+        </div>
+        
+        <div class="terminal-body">
+            <div class="terminal-sidebar">
+                <div class="sidebar-title">НАВИГАЦИЯ</div>
+                <div class="menu-item active" data-section="main-report">Сводный отчет КИППТ</div>
+                <div class="menu-item" data-section="anomalies">Классификация аномалий</div>
+                <div class="menu-item" data-section="chronology">Хронология 2010 года</div>
+                <div class="menu-item" data-section="structure">Оргструктура ГНК</div>
+                <div class="menu-item" data-section="nokvist">Ноквистский филиал</div>
+                <div class="menu-item" data-section="glossary">Глоссарий терминов</div>
+                
+                <!-- Отдельная кнопка для файлового менеджера -->
+                <div class="file-manager-btn" id="file-manager-btn">
+                    📁 ФАЙЛОВЫЙ МЕНЕДЖЕР
+                </div>
+            </div>
+            
+            <div class="terminal-content">
+                <!-- Сводный отчет -->
+                <div class="content-section active" id="main-report">
+                    <div class="content-title">СВОДНЫЙ ОТЧЁТ ПО ИНИЦИАТИВЕ «КИППТ»</div>
+                    <div class="alert">
+                        <strong>Классификация:</strong> ДЛЯ СЛУЖЕБНОГО ПОЛЬЗОВАНИЯ<br>
+                        <strong>Дата экспорта:</strong> 17.12.2025<br>
+                        <strong>Статус:</strong> Концептуальное моделирование завершено. Сеттинг стабилен.
+                    </div>
                     
-                    <div class="classified">АКТИВНЫЕ АНОМАЛИИ ЗОНЫ СИ-08:</div>
-                    <ul class="anomaly-list">
-                        <li><strong>ХИ-С-Р-112</strong> :: "Стеклянный ветер" :: Статус: <span class="status-online">КОНТЕЙНЕРИЗОВАНО</span></li>
-                        <li><strong>ПСИ-С-М-055</strong> :: "Эхо спокойствия" :: Статус: <span class="status-online">АКТИВЕН</span></li>
-                        <li><strong>ТК-М-Л-33</strong> :: "Червь сновидений" :: Статус: <span class="status-recovery">ЛАТЕНТНЫЙ</span></li>
-                        <li><strong>РФ-Д-Х-198</strong> :: "Тени Статуи Свободы" :: Статус: <span class="status-offline">НАБЛЮДЕНИЕ</span></li>
-                    </ul>
-
-                    <div class="file-manager-section">
-                        <div class="classified">СИСТЕМНЫЙ ФАЙЛ-МЕНЕДЖЕР</div>
+                    <div class="content-text">
+                        <p class="typing-text">Государственно-Научная Корпорация Контроля, Исследования и Поддержания Порядка на Постколлапсных Территориях (ГНК КИППТ) является основной структурой, ответственной за управление аномальными явлениями после глобального коллапса.</p>
                         
-                        <div class="file-manager-header">
-                            <div>
-                                <div style="color: #a0d2ff; font-size: 14px;">Управление системными файлами зоны СИ-08</div>
-                            </div>
-                            <div class="file-manager-buttons">
-                                <button class="system-btn" onclick="fileManager.refresh()">
-                                    <span>ОБНОВИТЬ</span>
-                                </button>
-                                <button class="system-btn" onclick="fileManager.createFolder()">
-                                    <span>НОВАЯ ПАПКА</span>
-                                </button>
-                                <button class="system-btn" onclick="fileManager.uploadFile()">
-                                    <span>ЗАГРУЗИТЬ</span>
-                                </button>
-                            </div>
+                        <p><strong>Миссия:</strong> Управление, изучение и сдерживание аномалий, возникших после неопределенного глобального коллапса ("Постколлапс").</p>
+                        
+                        <p><strong>Девизы:</strong></p>
+                        <ul>
+                            <li><strong>Официальный:</strong> «Наука. Контроль. Порядок.»</li>
+                            <li><strong>Внутренний:</strong> «Тьма – наш дом. Аномалии – наш объект изучения.»</li>
+                            <li><strong>Пропагандистский:</strong> «Выживание через регулирование.»</li>
+                        </ul>
+                        
+                        <p>Система функционирует на основе пяти основных подразделений, каждое из которых отвечает за свой сектор деятельности по контролю и исследованию аномалий.</p>
+                    </div>
+                </div>
+                
+                <!-- Классификация аномалий -->
+                <div class="content-section" id="anomalies">
+                    <div class="content-title">СИСТЕМА КЛАССИФИКАЦИИ АНОМАЛИЙ (Редакция 1.2)</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Формат кода:</strong> ТИП-ПОДКАТЕГОРИЯ-СВОЙСТВО-НОМЕР</p>
+                        
+                        <p><strong>Базовые типы (ТИП):</strong></p>
+                        <ul>
+                            <li><strong>ПР:</strong> Пространственные (нарушение законов физики)</li>
+                            <li><strong>БИО:</strong> Биологические (мутировавшая флора/фауна)</li>
+                            <li><strong>ПСИ:</strong> Психотропные (влияние на сознание)</li>
+                            <li><strong>ХР:</strong> Хроноаномалии (искажение времени)</li>
+                            <li><strong>АРТ:</strong> Артефакты (аномальные объекты)</li>
+                            <li><strong>ТК:</strong> Техногенные (остатки технологий)</li>
+                            <li><strong>РФ:</strong> Реликт-фантомы (призраки исчезнувших городов/государств)</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="anomaly-grid">
+                        <div class="anomaly-card">
+                            <div class="anomaly-code">ТК-Я-Х-47</div>
+                            <div class="anomaly-name">«Радио "Голос Мёртвых"»</div>
+                            <div class="anomaly-desc">Техногенная аномалия ядерной эры, активирующаяся ночью. Транслирует сообщения на частотах, которых не должно существовать.</div>
                         </div>
-
-                        <div id="filemanager-container"></div>
-
-                        <div class="file-manager-stats">
-                            <div class="stats-item">
-                                <span class="stats-value" id="total-files">0</span>
-                                <span class="stats-label">ФАЙЛОВ</span>
-                            </div>
-                            <div class="stats-item">
-                                <span class="stats-value" id="total-folders">0</span>
-                                <span class="stats-label">ПАПОК</span>
-                            </div>
-                            <div class="stats-item">
-                                <span class="stats-value" id="total-size">0 Б</span>
-                                <span class="stats-label">ОБЪЁМ</span>
-                            </div>
-                            <div class="stats-item">
-                                <span class="stats-value" id="last-update">--:--</span>
-                                <span class="stats-label">ОБНОВЛЕНО</span>
-                            </div>
+                        
+                        <div class="anomaly-card">
+                            <div class="anomaly-code">РФ-Д-Х-198</div>
+                            <div class="anomaly-name">«Тени Статуи Свободы»</div>
+                            <div class="anomaly-desc">Динамические реликт-фантомы в зоне Нью-Йорка. Проявляются при определённых атмосферных условиях.</div>
+                        </div>
+                        
+                        <div class="anomaly-card">
+                            <div class="anomaly-code">ХИ-С-Н-901</div>
+                            <div class="anomaly-name">«Красный снег»</div>
+                            <div class="anomaly-desc">Статичная химическая аномалия в Сибири, вызывающая ожоги и галлюцинации при контакте.</div>
                         </div>
                     </div>
                 </div>
-
-                <div class="sidebar">
-                    <div class="panel system-status">
-                        <div class="panel-title">СТАТУС СИСТЕМ</div>
-                        <div class="status-items">
-                            <div class="status-item">
-                                <span class="status-label">ТЕНЕСКАН:</span>
-                                <span class="status-value status-online">ОНЛАЙН</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">НОКСОМ:</span>
-                                <span class="status-value status-recovery">ВОССТАНОВЛЕНИЕ</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">ГЛОССАРИЙ:</span>
-                                <span class="status-value status-online">ОНЛАЙН</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">ЭРЕБ-7:</span>
-                                <span class="status-value status-offline">ОФФЛАЙН</span>
-                            </div>
-                            <div class="status-item">
-                                <span class="status-label">ФАНТОМ-ТЕРМИНАЛ:</span>
-                                <span class="status-value status-online">АКТИВЕН</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="panel guestbook">
-                        <div class="panel-title">ГОСТЕВАЯ КНИГА :: СИ-08</div>
-                        <div class="guestbook-entries" id="guestbook-entries">
-                            <div class="guestbook-entry">
-                                <strong>[СИСТЕМА]</strong> <span class="timestamp">17.12.2025 09:15</span><br>
-                                Добро пожаловать в терминал Ноквистского филиала. Ваши сообщения помогают улучшать работу.
-                            </div>
-                            <div class="guestbook-entry">
-                                <strong>[АГЕНТ_К-778]</strong> <span class="timestamp">16.12.2025 23:47</span><br>
-                                Патруль в секторе 3-А обнаружил несанкционированное проникновение. Требуется подкрепление УПП.
-                            </div>
-                            <div class="guestbook-entry">
-                                <strong>[ТЕХНИК_В-42]</strong> <span class="timestamp">16.12.2025 14:22</span><br>
-                                Стабилизаторы в лаборатории 4 вышли из строя. Требуется ремонт к 18:00.
-                            </div>
-                            <div class="guestbook-entry">
-                                <strong>[СТАРШИЙ_ИНСПЕКТОР]</strong> <span class="timestamp">16.12.2025 10:05</span><br>
-                                Все сотрудники обязаны пройти внеплановую проверку на лояльность к 18:00.
-                            </div>
-                        </div>
-                        <form class="guestbook-form" id="guestbook-form">
-                            <input type="text" placeholder="Ваше имя/ID" required maxlength="20">
-                            <textarea placeholder="Сообщение (макс. 100 символов)" rows="3" required maxlength="100"></textarea>
-                            <button type="submit">Отправить</button>
-                        </form>
-                    </div>
-
-                    <div class="panel">
-                        <div class="scrolling-text">
-                            <div class="scrolling-content">
-                                ••• ВНИМАНИЕ ••• Ограничен доступ в зону 7-Г ••• Проводятся учения УПП ••• Сообщить о подозрительной активности по каналу 77-ГНК ••• Соблюдайте протоколы безопасности •••
-                            </div>
-                        </div>
+                
+                <!-- Хронология -->
+                <div class="content-section" id="chronology">
+                    <div class="content-title">ХРОНОЛОГИЯ КЛЮЧЕВЫХ СОБЫТИЙ 2010 ГОДА</div>
+                    
+                    <div class="content-text">
+                        <p><strong>«Дело о сбитом самолёте» (Январь-Март)</strong></p>
+                        <p>Частный самолёт нарушает воздушное пространство зоны СИ-08 (Забайкалье) и разбивается под воздействием новой аномалии ХИ-С-Р-112 («Стеклянный ветер»). Проведена зачистка ОСО, классификация аномалии, кампания дезинформации от БИК.</p>
                         
-                        <div class="weather-info">
-                            <div class="panel-title">ПОГОДА :: ЗОНА СИ-08</div>
-                            <div class="weather-item">
-                                <span class="weather-label">Текущее состояние:</span>
-                                <span>Туман, -15°C</span>
-                            </div>
-                            <div class="weather-item">
-                                <span class="weather-label">Аномальная активность:</span>
-                                <span class="status-recovery">Низкая</span>
-                            </div>
-                            <div class="weather-item">
-                                <span class="weather-label">Рекомендации:</span>
-                                <span>Термозащита ОБЯЗАТЕЛЬНА</span>
-                            </div>
-                            <div class="weather-item">
-                                <span class="weather-label">Дежурный:</span>
-                                <span>Ст. инспектор Воронцов А.В.</span>
-                            </div>
-                        </div>
+                        <p><strong>«Бунт в посёлке 12-Г» (Апрель-Июнь)</strong></p>
+                        <p>Бунт сотрудников низшего звена из-за задержек зарплаты на станции ГНК в Красноярском крае. Подавлен силами УПП с использованием психотропного генератора ПСИ-С-М-055 («Эхо спокойствия»).</p>
                         
-                        <div class="counter">
-                            Посещений: <span id="visit-counter">1347</span>
+                        <p><strong>«Инцидент с партией сталкеров» (Июль-Сентябрь)</strong></p>
+                        <p>Гражданские мародёры похищают артефакты на периметре зоны УР-09 (Южный Урал). Операция ОСО «Возмездие» с ликвидацией сталкеров аномальным артефактом.</p>
+                        
+                        <p><strong>«Кризис системы НОКСОМ» (Октябрь-Декабрь)</strong></p>
+                        <p>Масштабный 72-часовой сбой системы управления «НОКСОМ» из-за активации латентной меметической аномалии ТК-М-Л-33 («Червь сновидений»), годами паразитировавшей в системе. Унизительное восстановление по бумажным архивам.</p>
+                    </div>
+                </div>
+                
+                <!-- Оргструктура -->
+                <div class="content-section" id="structure">
+                    <div class="content-title">ОРГАНИЗАЦИОННАЯ СТРУКТУРА И ТЕХНОЛОГИИ</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Подразделения ГНК КИППТ:</strong></p>
+                        <ul>
+                            <li><strong>ДАИ</strong> (Департамент Аномальных Исследований): Фундаментальная наука и классификация.</li>
+                            <li><strong>УПП</strong> (Управление Постколлапсного Порядка): Военизированная жандармерия и контроль населения.</li>
+                            <li><strong>ЦКТ</strong> (Центр Ксенотехнологий): Прикладные разработки на основе аномалий.</li>
+                            <li><strong>БИК</strong> (Бюро Информационного Контроля): Пропаганда, цензура, управление данными.</li>
+                            <li><strong>ОСО</strong> (Отдел Специальных Операций): Скрытые зачистки и ликвидации.</li>
+                        </ul>
+                        
+                        <p><strong>Программно-аппаратные комплексы (ПО):</strong></p>
+                        <ul>
+                            <li><strong>«ТЕНЕСКАН»:</strong> Система мониторинга и обнаружения угроз.</li>
+                            <li><strong>«НОКСОМ»:</strong> Операционная платформа для управления ресурсами и логистики.</li>
+                            <li><strong>«ГЛОССАРИЙ»:</strong> Централизованная база данных аномалий и протоколов сдерживания.</li>
+                            <li><strong>«ЭРЕБ-7»:</strong> Искусственный интеллект для анализа социума и прогнозирования беспорядков.</li>
+                            <li><strong>«ФАНТОМ-ТЕРМИНАЛ»:</strong> Полевой интерфейс для оперативного доступа агентов к данным.</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <!-- Ноквистский филиал -->
+                <div class="content-section" id="nokvist">
+                    <div class="content-title">ВЕБ-РЕСУРС НОКВИСТСКОГО ФИЛИАЛА (СИ-08)</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Цель:</strong> Информационный фронтенд для населения и сотрудников. Маскировка реальной деятельности под «экологический мониторинг».</p>
+                        
+                        <p><strong>Технические характеристики (аутентичные для эпохи 2000-2010-х):</strong></p>
+                        <ul>
+                            <li><strong>Кодировка:</strong> UTF-8</li>
+                            <li><strong>Вёрстка:</strong> Табличная</li>
+                            <li><strong>Дизайн:</strong> Цветовая схема на основе DarkSlateGray, Maroon</li>
+                            <li><strong>Интерактивные элементы:</strong> Гостевая книга, статус систем, бегущая строка</li>
+                        </ul>
+                        
+                        <p><strong>Статус систем (текущий):</strong></p>
+                        <ul>
+                            <li>ТЕНЕСКАН: ОНЛАЙН</li>
+                            <li>НОКСОМ: ВОССТАНОВЛЕНИЕ (отсылка к событиям 2010 г.)</li>
+                            <li>ГЛОССАРИЙ: ОНЛАЙН</li>
+                        </ul>
+                        
+                        <div class="alert">
+                            <strong>Внимание:</strong> Веб-ресурс временно недоступен для публичного доступа из-за проведения технических работ. Ожидаемое время восстановления: не определено.
                         </div>
                     </div>
                 </div>
+                
+                <!-- Глоссарий -->
+                <div class="content-section" id="glossary">
+                    <div class="content-title">ГЛОССАРИЙ ТЕРМИНОВ</div>
+                    
+                    <div class="content-text">
+                        <p><strong>Аномалия:</strong> Общее название для любого объекта, явления или сущности, нарушающей известные законы природы и представляющей потенциальную угрозу.</p>
+                        
+                        <p><strong>Зона:</strong> Классифицированная территория, находящаяся под контролем или наблюдением ГНК КИППТ (напр., СА-01, СИ-08).</p>
+                        
+                        <p><strong>Контейнеризация:</strong> Процедура изоляции аномалии в специальные средства сдерживания.</p>
+                        
+                        <p><strong>Постколлапсные территории:</strong> Регионы мира, пострадавшие от неопределенного глобального катаклизма, где аномалии проявляются наиболее часто.</p>
+                        
+                        <p><strong>Протокол сдерживания:</strong> Установленный набор правил и процедур для безопасного взаимодействия с аномалией или её нейтрализации.</p>
+                        
+                        <p><strong>Сталкер:</strong> Гражданское лицо, незаконно проникающее на закрытые территории для добычи и продажи артефактов.</p>
+                    </div>
+                </div>
+                
+                <!-- Файловый менеджер (скрыт по умолчанию) -->
+                <div class="filemanager-container" id="filemanager-container">
+                    <div class="fm-header">
+                        <div class="fm-title">ФАЙЛОВЫЙ МЕНЕДЖЕР :: СИСТЕМНЫЕ ФАЙЛЫ</div>
+                        <div class="fm-controls">
+                            <button id="fm-back-btn" class="fm-btn">← Назад</button>
+                            <button id="fm-refresh-btn" class="fm-btn">Обновить</button>
+                            <button id="fm-new-folder-btn" class="fm-btn">Новая папка</button>
+                            <button id="fm-new-file-btn" class="fm-btn">Новый файл</button>
+                            <button id="fm-upload-btn" class="fm-btn">Загрузить</button>
+                        </div>
+                    </div>
+                    
+                    <div class="fm-path" id="fm-current-path">/корень</div>
+                    
+                    <div class="fm-grid" id="fm-files-grid">
+                        <!-- Файлы и папки будут добавляться сюда динамически -->
+                    </div>
+                    
+                    <div class="fm-status" id="fm-status">
+                        Загружено файлов: <span id="fm-file-count">0</span> | 
+                        Общий размер: <span id="fm-total-size">0 байт</span> | 
+                        Свободно: <span id="fm-free-space">~5 МБ</span>
+                    </div>
+                </div>
+                
+                <!-- Командная строка -->
+                <div class="command-line">
+                    <span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span>
+                    <input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">
+                </div>
             </div>
-
-            <div class="footer">
-                © 2025 ГНК КИППТ :: "Наука. Контроль. Порядок." :: Система работает в штатном режиме
-                <br>Предупреждение: несанкционированный доступ карается в соответствии с Уставом ГНК
-            </div>
+        </div>
+        
+        <div class="terminal-footer">
+            <div>ГНК КИППТ • ФАНТОМ-ТЕРМИНАЛ v7.3.1 • СИ-08</div>
+            <div>Текущее время: <span id="current-time">--:--:--</span> • Дата: <span id="current-date">--.--.----</span></div>
+            <div>Статус: <span class="blink">ОНЛАЙН</span></div>
         </div>
     </div>
 
-    <script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
     <script>
-        // ==================== КОНФИГУРАЦИЯ ====================
-        const CONFIG = {
-            PASSWORD: "ГНК2025", // Пароль для доступа
-            DEMO_MODE: true, // Режим демо (без реального бэкенда)
-            FILE_MANAGER_HEIGHT: 400,
-            MAX_FILE_SIZE: 50 * 1024 * 1024, // 50MB
-            ALLOWED_TYPES: ['.txt', '.pdf', '.jpg', '.png', '.zip', '.doc', '.xls']
-        };
-
-        // ==================== СИСТЕМА ЗАГРУЗКИ ====================
-        const bootPhrases = ["SUN IS DEAD", "GRAVE IS FULL", "YOU IS FUEL"];
+        // Загрузочные фразы
+        const bootPhrases = [
+            "SUN IS DEAD",
+            "GRAVE IS FULL", 
+            "YOU IS FUEL"
+        ];
         
+        // Статусы загрузки
         const bootStatuses = [
             "Загрузка ядра системы...",
             "Инициализация модуля ТЕНЕСКАН...",
@@ -1140,6 +1241,7 @@
         let currentStatusIndex = 0;
         let progress = 0;
         
+        // Показать загрузочную фразу с эффектами
         function showBootPhrase(phraseIndex, lineElement) {
             return new Promise(resolve => {
                 const phrase = bootPhrases[phraseIndex];
@@ -1148,8 +1250,13 @@
                 
                 function typeNextChar() {
                     if (i < chars.length) {
+                        // Случайная задержка для эффекта "лагающего" терминала
                         let delay = Math.random() * 100 + 50;
-                        if (Math.random() < 0.1) delay += Math.random() * 200 + 100;
+                        
+                        // Иногда добавляем дополнительный лаг
+                        if (Math.random() < 0.1) {
+                            delay += Math.random() * 200 + 100;
+                        }
                         
                         setTimeout(() => {
                             lineElement.textContent += chars[i];
@@ -1157,7 +1264,9 @@
                             typeNextChar();
                         }, delay);
                     } else {
+                        // Добавляем глитч-эффект после завершения набора
                         setTimeout(() => {
+                            // Применяем разные эффекты глитча для каждой строки
                             if (phraseIndex === 0) {
                                 lineElement.classList.add('glitch-effect');
                                 lineElement.style.animationName = 'glitch1';
@@ -1169,6 +1278,7 @@
                                 lineElement.style.animationName = 'glitch3';
                             }
                             
+                            // Убираем эффект после завершения анимации
                             setTimeout(() => {
                                 lineElement.classList.remove('glitch-effect');
                                 lineElement.style.animationName = '';
@@ -1182,9 +1292,11 @@
             });
         }
         
+        // Обновление прогресса
         function updateProgress() {
             if (progress >= 100) return;
             
+            // Нелинейное увеличение прогресса для реалистичности
             let increment;
             if (progress < 30) {
                 increment = Math.floor(Math.random() * 5) + 2;
@@ -1199,6 +1311,7 @@
             document.getElementById('status-fill').style.width = `${progress}%`;
             document.getElementById('boot-progress').textContent = `${progress}%`;
             
+            // Обновляем текст статуса
             if (progress < 100) {
                 const nextStatusIndex = Math.floor((progress / 100) * bootStatuses.length);
                 if (nextStatusIndex > currentStatusIndex && nextStatusIndex < bootStatuses.length) {
@@ -1213,333 +1326,33 @@
             }
         }
         
+        // Завершение загрузки
         function finalizeBoot() {
             const bootScreen = document.getElementById('boot-screen');
             bootScreen.style.opacity = '0';
             setTimeout(() => {
                 bootScreen.style.display = 'none';
-                document.getElementById('password-screen').style.display = 'flex';
+                document.getElementById('terminal').style.display = 'block';
+                document.getElementById('scanline').style.display = 'block';
+                startTerminalEffects();
+                initializeFileManager();
                 
-                // Фокус на поле ввода пароля
-                setTimeout(() => {
-                    document.getElementById('password-input').focus();
-                }, 100);
+                // Имитация увеличения счетчика посещений
+                let visitCount = 1347;
+                setInterval(() => {
+                    visitCount++;
+                    document.getElementById('visit-counter').textContent = visitCount;
+                }, 5000);
             }, 500);
         }
-
-        // ==================== СИСТЕМА ПАРОЛЯ ====================
-        function checkPassword() {
-            const input = document.getElementById('password-input');
-            const error = document.getElementById('password-error');
-            const password = input.value.trim();
-            
-            if (password === CONFIG.PASSWORD) {
-                // Успешный вход
-                error.textContent = "";
-                input.style.borderColor = "#4caf50";
-                
-                // Эффект успешного входа
-                document.getElementById('password-screen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('password-screen').style.display = 'none';
-                    document.getElementById('terminal').style.display = 'block';
-                    startTerminalEffects();
-                    initializeFileManager();
-                    
-                    // Логирование входа
-                    addGuestbookEntry('[СИСТЕМА]', `Аутентификация успешна. Пользователь вошел в систему.`);
-                }, 500);
-            } else {
-                // Ошибка входа
-                error.textContent = "ОШИБКА: Неверный код доступа. Попытка зафиксирована.";
-                input.style.borderColor = "#ff5252";
-                input.value = "";
-                
-                // Эффект ошибки
-                input.classList.add('glitch-effect');
-                input.style.animationName = 'glitch1';
-                setTimeout(() => {
-                    input.classList.remove('glitch-effect');
-                    input.style.animationName = '';
-                }, 300);
-                
-                // Логирование ошибки
-                addGuestbookEntry('[СИСТЕМА]', `Обнаружена попытка несанкционированного доступа.`);
-            }
-        }
-
-        // Обработка Enter в поле пароля
-        document.getElementById('password-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                checkPassword();
-            }
-        });
-
-        // ==================== ФАЙЛОВЫЙ МЕНЕДЖЕР ====================
-        let fileManager = null;
-        let fileManagerData = {
-            files: [],
-            folders: [],
-            lastUpdate: new Date()
-        };
-
-        function initializeFileManager() {
-            // Инициализация демо-данных
-            fileManagerData = {
-                files: [
-                    { id: "1", value: "system_logs_2025.zip", type: "file", size: 2457600, date: "17.12.2025" },
-                    { id: "2", value: "anomaly_report.pdf", type: "file", size: 512000, date: "16.12.2025" },
-                    { id: "3", value: "security_protocols.doc", type: "file", size: 102400, date: "15.12.2025" },
-                    { id: "4", value: "zone_si08_map.jpg", type: "file", size: 2048000, date: "14.12.2025" },
-                    { id: "5", value: "personnel_list.xls", type: "file", size: 307200, date: "13.12.2025" }
-                ],
-                folders: [
-                    { id: "f1", value: "Системные_логи", type: "folder", size: 0, date: "17.12.2025" },
-                    { id: "f2", value: "Отчёты_об_аномалиях", type: "folder", size: 0, date: "16.12.2025" },
-                    { id: "f3", value: "Документация_ГНК", type: "folder", size: 0, date: "15.12.2025" }
-                ],
-                lastUpdate: new Date()
-            };
-
-            // Создание файлового менеджера Webix
-            fileManager = webix.ui({
-                container: "filemanager-container",
-                view: "datatable",
-                columns: [
-                    { 
-                        id: "value", 
-                        header: "Имя файла", 
-                        fillspace: 3,
-                        template: function(obj) {
-                            const icon = obj.type === "folder" ? 
-                                '<span style="color:#66d9ff; margin-right:8px;">📁</span>' : 
-                                '<span style="color:#a0d2ff; margin-right:8px;">📄</span>';
-                            return icon + webix.html.escape(obj.value);
-                        }
-                    },
-                    { 
-                        id: "type", 
-                        header: "Тип", 
-                        width: 80,
-                        template: function(obj) {
-                            return obj.type === "folder" ? "Папка" : "Файл";
-                        }
-                    },
-                    { 
-                        id: "size", 
-                        header: "Размер", 
-                        width: 100,
-                        template: function(obj) {
-                            return obj.type === "folder" ? "-" : formatFileSize(obj.size);
-                        }
-                    },
-                    { 
-                        id: "date", 
-                        header: "Дата", 
-                        width: 100 
-                    },
-                    {
-                        id: "actions",
-                        header: "Действия",
-                        width: 100,
-                        template: function(obj) {
-                            return '<button class="system-btn" style="padding:4px 8px; font-size:12px;" onclick="fileManagerActions(\'' + obj.id + '\')">Открыть</button>';
-                        }
-                    }
-                ],
-                data: [...fileManagerData.folders, ...fileManagerData.files],
-                select: true,
-                scroll: true,
-                css: "webix_data_table",
-                on: {
-                    onAfterSelect: function(id) {
-                        const item = this.getItem(id);
-                        if (item.type === "folder") {
-                            webix.message(`Открытие папки: ${item.value}`);
-                        }
-                    }
-                }
-            });
-
-            // Обновление статистики
-            updateFileStats();
-            
-            // Обновление времени
-            document.getElementById('last-update').textContent = 
-                `${fileManagerData.lastUpdate.getHours().toString().padStart(2, '0')}:${fileManagerData.lastUpdate.getMinutes().toString().padStart(2, '0')}`;
-        }
-
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Б';
-            const k = 1024;
-            const sizes = ['Б', 'КБ', 'МБ', 'ГБ'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
-        }
-
-        function updateFileStats() {
-            document.getElementById('total-files').textContent = fileManagerData.files.length;
-            document.getElementById('total-folders').textContent = fileManagerData.folders.length;
-            
-            const totalSize = fileManagerData.files.reduce((sum, file) => sum + file.size, 0);
-            document.getElementById('total-size').textContent = formatFileSize(totalSize);
-        }
-
-        // Объект для управления файловым менеджером
-        window.fileManager = {
-            refresh: function() {
-                webix.message("Обновление списка файлов...");
-                fileManager.clearAll();
-                fileManager.parse([...fileManagerData.folders, ...fileManagerData.files]);
-                updateFileStats();
-                addGuestbookEntry('[СИСТЕМА]', 'Обновлен список файлов системы.');
-            },
-            
-            createFolder: function() {
-                webix.prompt({
-                    title: "Создание новой папки",
-                    text: "Введите имя папки:",
-                    ok: "Создать",
-                    cancel: "Отмена",
-                    input: { value: "Новая_папка_" + (fileManagerData.folders.length + 1) }
-                }).then(function(result) {
-                    if (result) {
-                        const newFolder = {
-                            id: "f" + (fileManagerData.folders.length + 1),
-                            value: result,
-                            type: "folder",
-                            size: 0,
-                            date: new Date().toLocaleDateString('ru-RU')
-                        };
-                        
-                        fileManagerData.folders.push(newFolder);
-                        fileManager.add(newFolder);
-                        updateFileStats();
-                        
-                        addGuestbookEntry('[СИСТЕМА]', `Создана новая папка: ${result}`);
-                    }
-                });
-            },
-            
-            uploadFile: function() {
-                if (CONFIG.DEMO_MODE) {
-                    webix.message("В демо-режиме загрузка файлов эмулируется.");
-                    
-                    // Эмуляция загрузки файла
-                    const newFile = {
-                        id: "f" + (fileManagerData.files.length + 1),
-                        value: "демо_файл_" + (fileManagerData.files.length + 1) + ".txt",
-                        type: "file",
-                        size: Math.floor(Math.random() * 1024000) + 1024,
-                        date: new Date().toLocaleDateString('ru-RU')
-                    };
-                    
-                    setTimeout(() => {
-                        fileManagerData.files.push(newFile);
-                        fileManager.add(newFile);
-                        updateFileStats();
-                        addGuestbookEntry('[СИСТЕМА]', `Загружен файл: ${newFile.value}`);
-                    }, 1000);
-                } else {
-                    // Реальная загрузка файла
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = CONFIG.ALLOWED_TYPES.join(',');
-                    input.onchange = function(e) {
-                        const file = e.target.files[0];
-                        if (file.size > CONFIG.MAX_FILE_SIZE) {
-                            webix.alert("Ошибка: Файл слишком большой. Максимальный размер: 50MB");
-                            return;
-                        }
-                        
-                        // Здесь можно добавить реальную загрузку на сервер
-                        webix.message(`Загрузка файла: ${file.name}`);
-                    };
-                    input.click();
-                }
-            }
-        };
-
-        function fileManagerActions(id) {
-            const item = fileManager.getItem(id);
-            if (item.type === "folder") {
-                webix.message(`Открытие папки: ${item.value}`);
-            } else {
-                webix.message(`Открытие файла: ${item.value} (${formatFileSize(item.size)})`);
-            }
-        }
-
-        // ==================== СИСТЕМНЫЕ ФУНКЦИИ ====================
-        function startTerminalEffects() {
-            // Обновление времени
-            function updateTime() {
-                const now = new Date();
-                const hours = now.getHours().toString().padStart(2, '0');
-                const minutes = now.getMinutes().toString().padStart(2, '0');
-                document.getElementById('current-time').textContent = `${hours}:${minutes}`;
-                setTimeout(updateTime, 60000);
-            }
-            updateTime();
-            
-            // Счетчик посещений
-            let visitCount = 1347;
-            setInterval(() => {
-                visitCount++;
-                document.getElementById('visit-counter').textContent = visitCount;
-            }, 5000);
-            
-            // Эффект мерцания
-            setInterval(() => {
-                if (Math.random() > 0.95) {
-                    const terminal = document.getElementById('terminal');
-                    terminal.style.opacity = '0.97';
-                    setTimeout(() => {
-                        terminal.style.opacity = '1';
-                    }, 60);
-                }
-            }, 2000);
-        }
-
-        function addGuestbookEntry(name, message) {
-            const now = new Date();
-            const dateStr = `${now.getDate().toString().padStart(2, '0')}.${(now.getMonth()+1).toString().padStart(2, '0')}.${now.getFullYear()}`;
-            const timeStr = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
-            
-            const entry = document.createElement('div');
-            entry.className = 'guestbook-entry';
-            entry.innerHTML = `
-                <strong>[${name.toUpperCase()}]</strong> <span class="timestamp">${dateStr} ${timeStr}</span><br>
-                ${message.replace(/</g, '&lt;').replace(/>/g, '&gt;')}
-            `;
-            
-            const entriesContainer = document.getElementById('guestbook-entries');
-            entriesContainer.insertBefore(entry, entriesContainer.firstChild);
-            
-            // Ограничение количества записей
-            if (entriesContainer.children.length > 10) {
-                entriesContainer.removeChild(entriesContainer.lastChild);
-            }
-        }
-
-        // Обработка формы гостевой книги
-        document.getElementById('guestbook-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = this[0].value.trim() || 'ГОСТЬ';
-            const message = this[1].value.trim();
-            
-            if (message) {
-                addGuestbookEntry(name, message);
-                this[0].value = '';
-                this[1].value = '';
-            }
-        });
-
-        // ==================== ЗАПУСК СИСТЕМЫ ====================
+        
+        // Основная функция загрузки системы
         async function bootSystem() {
             const line1 = document.getElementById('phrase-line1');
             const line2 = document.getElementById('phrase-line2');
             const line3 = document.getElementById('phrase-line3');
             
+            // Показываем фразы последовательно
             line1.classList.add('fade-in-up');
             await showBootPhrase(0, line1);
             
@@ -1553,10 +1366,777 @@
             line3.classList.add('fade-in-up');
             await showBootPhrase(2, line3);
             
+            // Начинаем прогресс загрузки
             setTimeout(updateProgress, 1000);
         }
-
+        
+        // Эффекты терминала
+        function startTerminalEffects() {
+            // Обновление времени
+            function updateTime() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                document.getElementById('current-time').textContent = `${hours}:${minutes}:${seconds}`;
+                setTimeout(updateTime, 1000);
+            }
+            updateTime();
+            
+            // Обновление даты
+            function updateDate() {
+                const now = new Date();
+                const day = now.getDate().toString().padStart(2, '0');
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const year = now.getFullYear();
+                document.getElementById('current-date').textContent = `${day}.${month}.${year}`;
+            }
+            updateDate();
+            
+            // Мерцание для аутентичности
+            setInterval(() => {
+                const terminal = document.getElementById('terminal');
+                if (Math.random() > 0.95) {
+                    terminal.style.opacity = '0.97';
+                    setTimeout(() => {
+                        terminal.style.opacity = '1';
+                    }, 60);
+                }
+            }, 2000);
+        }
+        
+        // ===================== ФАЙЛОВЫЙ МЕНЕДЖЕР =====================
+        
+        // Пароль для доступа к файловому менеджеру
+        const FM_PASSWORD = "noktivist2025";
+        
+        // Состояние файлового менеджера
+        let fmState = {
+            isAuthenticated: false,
+            currentPath: '/',
+            files: [],
+            passwordAttempts: 0
+        };
+        
+        // Инициализация файлового менеджера
+        function initializeFileManager() {
+            // Загружаем сохраненные файлы из LocalStorage
+            loadFilesFromStorage();
+            
+            // Настраиваем обработчики событий для кнопок
+            document.getElementById('password-submit').addEventListener('click', handlePasswordSubmit);
+            document.getElementById('password-cancel').addEventListener('click', hidePasswordModal);
+            document.getElementById('password-input').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handlePasswordSubmit();
+            });
+            
+            // Кнопка файлового менеджера в боковой панели
+            document.getElementById('file-manager-btn').addEventListener('click', () => {
+                if (fmState.isAuthenticated) {
+                    showFileManager();
+                } else {
+                    showPasswordModal();
+                }
+            });
+            
+            // Кнопки файлового менеджера
+            document.getElementById('fm-back-btn').addEventListener('click', navigateToParentFolder);
+            document.getElementById('fm-refresh-btn').addEventListener('click', refreshFileManager);
+            document.getElementById('fm-new-folder-btn').addEventListener('click', showCreateFolderModal);
+            document.getElementById('fm-new-file-btn').addEventListener('click', showCreateFileModal);
+            document.getElementById('fm-upload-btn').addEventListener('click', handleFileUpload);
+            
+            // Модальные окна
+            document.getElementById('fm-create-folder-cancel').addEventListener('click', hideCreateFolderModal);
+            document.getElementById('fm-create-folder-submit').addEventListener('click', createNewFolder);
+            document.getElementById('fm-create-file-cancel').addEventListener('click', hideCreateFileModal);
+            document.getElementById('fm-create-file-submit').addEventListener('click', createNewFile);
+            
+            // Навигация по меню
+            const menuItems = document.querySelectorAll('.menu-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    // Скрываем файловый менеджер при переходе на другие разделы
+                    document.getElementById('filemanager-container').classList.remove('active');
+                    
+                    // Убираем активный класс у всех пунктов меню
+                    menuItems.forEach(i => i.classList.remove('active'));
+                    
+                    // Добавляем активный класс текущему пункту
+                    this.classList.add('active');
+                    
+                    // Скрываем все секции контента
+                    contentSections.forEach(section => section.classList.remove('active'));
+                    
+                    // Показываем выбранную секцию
+                    const sectionId = this.getAttribute('data-section');
+                    document.getElementById(sectionId).classList.add('active');
+                    
+                    // Фокус на поле ввода команд
+                    document.getElementById('command-input').focus();
+                });
+            });
+            
+            // Инициализируем стандартные файлы при первом запуске
+            if (!localStorage.getItem('fm_initialized')) {
+                initializeDefaultFiles();
+                localStorage.setItem('fm_initialized', 'true');
+            }
+        }
+        
+        // Показать модальное окно пароля
+        function showPasswordModal() {
+            document.getElementById('password-modal').style.display = 'flex';
+            document.getElementById('password-input').focus();
+        }
+        
+        // Скрыть модальное окно пароля
+        function hidePasswordModal() {
+            document.getElementById('password-modal').style.display = 'none';
+            document.getElementById('password-input').value = '';
+            document.getElementById('password-error').textContent = '';
+        }
+        
+        // Обработка ввода пароля
+        function handlePasswordSubmit() {
+            const passwordInput = document.getElementById('password-input');
+            const enteredPassword = passwordInput.value;
+            const errorElement = document.getElementById('password-error');
+            
+            if (enteredPassword === FM_PASSWORD) {
+                fmState.isAuthenticated = true;
+                fmState.passwordAttempts = 0;
+                
+                // Показываем файловый менеджер
+                showFileManager();
+                hidePasswordModal();
+                
+                // Добавляем запись в лог
+                console.log('Доступ к файловому менеджеру разрешен');
+                
+            } else {
+                fmState.passwordAttempts++;
+                errorElement.textContent = `Неверный пароль. Попытка ${fmState.passwordAttempts}/3`;
+                
+                if (fmState.passwordAttempts >= 3) {
+                    errorElement.textContent = 'Доступ заблокирован на 30 секунд. Слишком много неверных попыток.';
+                    passwordInput.disabled = true;
+                    
+                    setTimeout(() => {
+                        passwordInput.disabled = false;
+                        fmState.passwordAttempts = 0;
+                        errorElement.textContent = '';
+                    }, 30000);
+                }
+            }
+        }
+        
+        // Показать файловый менеджер
+        function showFileManager() {
+            // Скрываем все остальные секции
+            const contentSections = document.querySelectorAll('.content-section');
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            // Скрываем командную строку
+            document.querySelector('.command-line').style.display = 'none';
+            
+            // Показываем файловый менеджер
+            const fileManager = document.getElementById('filemanager-container');
+            fileManager.classList.add('active');
+            fileManager.style.display = 'block';
+            
+            // Обновляем навигацию
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => item.classList.remove('active'));
+            
+            // Обновляем файловый менеджер
+            refreshFileManager();
+        }
+        
+        // Скрыть файловый менеджер и вернуться к основному контенту
+        function hideFileManager() {
+            // Показываем сводный отчет по умолчанию
+            document.getElementById('filemanager-container').classList.remove('active');
+            document.querySelector('.command-line').style.display = 'block';
+            
+            const menuItems = document.querySelectorAll('.menu-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            
+            menuItems.forEach(item => item.classList.remove('active'));
+            document.querySelector('.menu-item[data-section="main-report"]').classList.add('active');
+            
+            contentSections.forEach(section => section.classList.remove('active'));
+            document.getElementById('main-report').classList.add('active');
+        }
+        
+        // Загрузка файлов из LocalStorage
+        function loadFilesFromStorage() {
+            const savedFiles = localStorage.getItem('fm_files');
+            if (savedFiles) {
+                fmState.files = JSON.parse(savedFiles);
+            } else {
+                fmState.files = [];
+            }
+        }
+        
+        // Сохранение файлов в LocalStorage
+        function saveFilesToStorage() {
+            localStorage.setItem('fm_files', JSON.stringify(fmState.files));
+        }
+        
+        // Инициализация стандартных файлов
+        function initializeDefaultFiles() {
+            const defaultFiles = [
+                {
+                    id: '1',
+                    name: 'README.md',
+                    type: 'file',
+                    path: '/',
+                    content: '# Файловая система ГНК КИППТ\n\nДобро пожаловать в защищенную файловую систему Корпорации Ноктвист.\n\n## Правила использования:\n1. Все файлы логируются\n2. Не удаляйте системные файлы\n3. Сохраняйте конфиденциальность данных\n\n## Системные директории:\n- /docs - Документация\n- /reports - Отчеты\n- /logs - Логи системы',
+                    size: 350,
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString()
+                },
+                {
+                    id: '2',
+                    name: 'docs',
+                    type: 'folder',
+                    path: '/',
+                    content: '',
+                    size: 0,
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString()
+                },
+                {
+                    id: '3',
+                    name: 'reports',
+                    type: 'folder',
+                    path: '/',
+                    content: '',
+                    size: 0,
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString()
+                },
+                {
+                    id: '4',
+                    name: 'protocol_alpha.txt',
+                    type: 'file',
+                    path: '/',
+                    content: 'ПРОТОКОЛ АЛЬФА\nСтатус: АКТИВЕН\n\n1. Мониторинг температурных аномалий\n2. Контроль ядер стужи\n3. Сбор данных для проекта "Возврат"\n\nПоследнее обновление: 17.12.2025',
+                    size: 280,
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString()
+                },
+                {
+                    id: '5',
+                    name: 'log_20251217.txt',
+                    type: 'file',
+                    path: '/',
+                    content: 'ЛОГ СИСТЕМЫ 17.12.2025\n08:30 - Система НОКСОМ восстановлена\n09:15 - Запуск ФАНТОМ-ТЕРМИНАЛА\n09:45 - Проверка систем безопасности\n10:00 - Мониторинг аномалий активен',
+                    size: 200,
+                    created: new Date().toISOString(),
+                    modified: new Date().toISOString()
+                }
+            ];
+            
+            fmState.files = defaultFiles;
+            saveFilesToStorage();
+        }
+        
+        // Обновление интерфейса файлового менеджера
+        function refreshFileManager() {
+            if (!fmState.isAuthenticated) return;
+            
+            const filesGrid = document.getElementById('fm-files-grid');
+            const currentPathElement = document.getElementById('fm-current-path');
+            
+            // Обновляем текущий путь
+            currentPathElement.textContent = fmState.currentPath;
+            
+            // Очищаем сетку
+            filesGrid.innerHTML = '';
+            
+            // Фильтруем файлы по текущему пути
+            const currentFiles = fmState.files.filter(file => file.path === fmState.currentPath);
+            
+            // Добавляем родительскую папку (если не в корне)
+            if (fmState.currentPath !== '/') {
+                const parentItem = document.createElement('div');
+                parentItem.className = 'fm-item folder';
+                parentItem.innerHTML = `
+                    <div class="fm-icon">📁</div>
+                    <div class="fm-name">..</div>
+                    <div class="fm-size">Родительская папка</div>
+                `;
+                parentItem.addEventListener('click', () => {
+                    navigateToParentFolder();
+                });
+                filesGrid.appendChild(parentItem);
+            }
+            
+            // Добавляем файлы и папки
+            currentFiles.forEach(file => {
+                const item = document.createElement('div');
+                item.className = `fm-item ${file.type}`;
+                item.dataset.id = file.id;
+                
+                const icon = file.type === 'folder' ? '📁' : getFileIcon(file.name);
+                const size = file.type === 'folder' ? 'Папка' : formatFileSize(file.size);
+                
+                item.innerHTML = `
+                    <div class="fm-icon">${icon}</div>
+                    <div class="fm-name">${file.name}</div>
+                    <div class="fm-size">${size}</div>
+                `;
+                
+                item.addEventListener('click', (e) => {
+                    if (file.type === 'folder') {
+                        navigateToFolder(file.name);
+                    } else {
+                        openFile(file);
+                    }
+                });
+                
+                item.addEventListener('contextmenu', (e) => {
+                    e.preventDefault();
+                    showFileContextMenu(file, e.clientX, e.clientY);
+                });
+                
+                filesGrid.appendChild(item);
+            });
+            
+            // Обновляем статистику
+            updateFileManagerStats();
+        }
+        
+        // Получить иконку для файла по расширению
+        function getFileIcon(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            const icons = {
+                'txt': '📄',
+                'md': '📝',
+                'pdf': '📕',
+                'jpg': '🖼️',
+                'png': '🖼️',
+                'doc': '📘',
+                'docx': '📘',
+                'xls': '📊',
+                'xlsx': '📊',
+                'zip': '🗜️',
+                'rar': '🗜️',
+                'exe': '⚙️',
+                'js': '📜',
+                'html': '🌐',
+                'css': '🎨',
+                'json': '📋',
+                'log': '📋'
+            };
+            
+            return icons[ext] || '📄';
+        }
+        
+        // Форматирование размера файла
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 байт';
+            const k = 1024;
+            const sizes = ['байт', 'КБ', 'МБ', 'ГБ'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Навигация в родительскую папку
+        function navigateToParentFolder() {
+            if (fmState.currentPath === '/') return;
+            
+            const pathParts = fmState.currentPath.split('/').filter(part => part);
+            pathParts.pop();
+            fmState.currentPath = pathParts.length === 0 ? '/' : '/' + pathParts.join('/') + '/';
+            refreshFileManager();
+        }
+        
+        // Навигация в папку
+        function navigateToFolder(folderName) {
+            if (fmState.currentPath === '/') {
+                fmState.currentPath = `/${folderName}/`;
+            } else {
+                fmState.currentPath += `${folderName}/`;
+            }
+            refreshFileManager();
+        }
+        
+        // Открытие файла
+        function openFile(file) {
+            alert(`Содержимое файла ${file.name}:\n\n${file.content}\n\nРазмер: ${formatFileSize(file.size)} байт\nСоздан: ${new Date(file.created).toLocaleString()}\nИзменен: ${new Date(file.modified).toLocaleString()}`);
+        }
+        
+        // Обновление статистики файлового менеджера
+        function updateFileManagerStats() {
+            const totalFiles = fmState.files.filter(f => f.type === 'file').length;
+            const totalSize = fmState.files.reduce((sum, file) => sum + file.size, 0);
+            
+            document.getElementById('fm-file-count').textContent = totalFiles;
+            document.getElementById('fm-total-size').textContent = formatFileSize(totalSize);
+            
+            // Рассчитываем свободное место (эмуляция)
+            const freeSpace = 5 * 1024 * 1024 - totalSize; // 5 МБ - totalSize
+            document.getElementById('fm-free-space').textContent = formatFileSize(Math.max(0, freeSpace));
+        }
+        
+        // Показать модальное окно создания папки
+        function showCreateFolderModal() {
+            document.getElementById('fm-create-folder-modal').style.display = 'flex';
+            document.getElementById('fm-folder-name').focus();
+        }
+        
+        // Скрыть модальное окно создания папки
+        function hideCreateFolderModal() {
+            document.getElementById('fm-create-folder-modal').style.display = 'none';
+            document.getElementById('fm-folder-name').value = '';
+        }
+        
+        // Создать новую папка
+        function createNewFolder() {
+            const folderName = document.getElementById('fm-folder-name').value.trim();
+            
+            if (!folderName) {
+                alert('Введите название папки');
+                return;
+            }
+            
+            // Проверяем, существует ли уже папка с таким именем
+            const existingFolder = fmState.files.find(f => 
+                f.path === fmState.currentPath && 
+                f.name === folderName && 
+                f.type === 'folder'
+            );
+            
+            if (existingFolder) {
+                alert('Папка с таким именем уже существует');
+                return;
+            }
+            
+            // Создаем новую папку
+            const newFolder = {
+                id: 'folder_' + Date.now(),
+                name: folderName,
+                type: 'folder',
+                path: fmState.currentPath,
+                content: '',
+                size: 0,
+                created: new Date().toISOString(),
+                modified: new Date().toISOString()
+            };
+            
+            fmState.files.push(newFolder);
+            saveFilesToStorage();
+            refreshFileManager();
+            hideCreateFolderModal();
+        }
+        
+        // Показать модальное окно создания файла
+        function showCreateFileModal() {
+            document.getElementById('fm-create-file-modal').style.display = 'flex';
+            document.getElementById('fm-file-name').focus();
+        }
+        
+        // Скрыть модальное окно создания файла
+        function hideCreateFileModal() {
+            document.getElementById('fm-create-file-modal').style.display = 'none';
+            document.getElementById('fm-file-name').value = '';
+            document.getElementById('fm-file-content').value = '';
+        }
+        
+        // Создать новый файл
+        function createNewFile() {
+            const fileName = document.getElementById('fm-file-name').value.trim();
+            const fileContent = document.getElementById('fm-file-content').value;
+            
+            if (!fileName) {
+                alert('Введите название файла');
+                return;
+            }
+            
+            // Проверяем, существует ли уже файл с таким именем
+            const existingFile = fmState.files.find(f => 
+                f.path === fmState.currentPath && 
+                f.name === fileName && 
+                f.type === 'file'
+            );
+            
+            if (existingFile) {
+                if (!confirm('Файл с таким именем уже существует. Перезаписать?')) {
+                    return;
+                }
+                
+                // Удаляем старый файл
+                fmState.files = fmState.files.filter(f => f.id !== existingFile.id);
+            }
+            
+            // Создаем новый файл
+            const newFile = {
+                id: 'file_' + Date.now(),
+                name: fileName,
+                type: 'file',
+                path: fmState.currentPath,
+                content: fileContent,
+                size: new Blob([fileContent]).size,
+                created: new Date().toISOString(),
+                modified: new Date().toISOString()
+            };
+            
+            fmState.files.push(newFile);
+            saveFilesToStorage();
+            refreshFileManager();
+            hideCreateFileModal();
+        }
+        
+        // Загрузка файлов с компьютера
+        function handleFileUpload() {
+            // Создаем скрытый input для выбора файлов
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.multiple = true;
+            fileInput.style.display = 'none';
+            
+            fileInput.addEventListener('change', (e) => {
+                const files = Array.from(e.target.files);
+                
+                files.forEach(file => {
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // Проверяем, существует ли уже файл с таким именем
+                        const existingFile = fmState.files.find(f => 
+                            f.path === fmState.currentPath && 
+                            f.name === file.name && 
+                            f.type === 'file'
+                        );
+                        
+                        if (existingFile) {
+                            if (!confirm(`Файл "${file.name}" уже существует. Перезаписать?`)) {
+                                return;
+                            }
+                            
+                            // Удаляем старый файл
+                            fmState.files = fmState.files.filter(f => f.id !== existingFile.id);
+                        }
+                        
+                        // Создаем новый файл
+                        const newFile = {
+                            id: 'uploaded_' + Date.now() + '_' + Math.random(),
+                            name: file.name,
+                            type: 'file',
+                            path: fmState.currentPath,
+                            content: e.target.result,
+                            size: file.size,
+                            created: new Date().toISOString(),
+                            modified: new Date().toISOString()
+                        };
+                        
+                        fmState.files.push(newFile);
+                        saveFilesToStorage();
+                        refreshFileManager();
+                    };
+                    
+                    reader.readAsText(file);
+                });
+                
+                document.body.removeChild(fileInput);
+            });
+            
+            document.body.appendChild(fileInput);
+            fileInput.click();
+        }
+        
+        // Контекстное меню для файлов (удаление, переименование)
+        function showFileContextMenu(file, x, y) {
+            // Удаляем старое контекстное меню, если есть
+            const oldMenu = document.getElementById('fm-context-menu');
+            if (oldMenu) oldMenu.remove();
+            
+            // Создаем новое контекстное меню
+            const contextMenu = document.createElement('div');
+            contextMenu.id = 'fm-context-menu';
+            contextMenu.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                background: linear-gradient(145deg, #071528, #0a1a2f);
+                border: 1px solid #1a5fb4;
+                border-radius: 5px;
+                box-shadow: 0 0 15px rgba(26, 95, 180, 0.5);
+                z-index: 1000;
+                min-width: 150px;
+            `;
+            
+            const menuItems = [
+                { text: 'Открыть', action: () => openFile(file) },
+                { text: 'Переименовать', action: () => renameFile(file) },
+                { text: 'Удалить', action: () => deleteFile(file) },
+                { text: 'Скачать', action: () => downloadFile(file) }
+            ];
+            
+            menuItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.style.cssText = `
+                    padding: 10px 15px;
+                    color: #66d9ff;
+                    cursor: pointer;
+                    border-bottom: 1px solid #0a2844;
+                    transition: background-color 0.3s;
+                `;
+                menuItem.textContent = item.text;
+                
+                menuItem.addEventListener('mouseenter', () => {
+                    menuItem.style.backgroundColor = 'rgba(26, 95, 180, 0.3)';
+                });
+                
+                menuItem.addEventListener('mouseleave', () => {
+                    menuItem.style.backgroundColor = 'transparent';
+                });
+                
+                menuItem.addEventListener('click', () => {
+                    item.action();
+                    contextMenu.remove();
+                });
+                
+                contextMenu.appendChild(menuItem);
+            });
+            
+            document.body.appendChild(contextMenu);
+            
+            // Удаляем меню при клике вне его
+            setTimeout(() => {
+                const removeMenu = (e) => {
+                    if (!contextMenu.contains(e.target)) {
+                        contextMenu.remove();
+                        document.removeEventListener('click', removeMenu);
+                    }
+                };
+                document.addEventListener('click', removeMenu);
+            }, 100);
+        }
+        
+        // Переименование файла
+        function renameFile(file) {
+            const newName = prompt('Введите новое имя:', file.name);
+            
+            if (newName && newName !== file.name) {
+                // Проверяем, существует ли уже файл с таким именем
+                const existingFile = fmState.files.find(f => 
+                    f.path === file.path && 
+                    f.name === newName && 
+                    f.type === file.type &&
+                    f.id !== file.id
+                );
+                
+                if (existingFile) {
+                    alert('Файл с таким именем уже существует');
+                    return;
+                }
+                
+                file.name = newName;
+                file.modified = new Date().toISOString();
+                saveFilesToStorage();
+                refreshFileManager();
+            }
+        }
+        
+        // Удаление файла
+        function deleteFile(file) {
+            if (confirm(`Вы уверены, что хотите удалить "${file.name}"?`)) {
+                fmState.files = fmState.files.filter(f => f.id !== file.id);
+                saveFilesToStorage();
+                refreshFileManager();
+            }
+        }
+        
+        // Скачивание файла
+        function downloadFile(file) {
+            const blob = new Blob([file.content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = file.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+        
+        // Обработка командной строки
+        document.getElementById('command-input').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                const command = this.value.trim().toLowerCase();
+                this.value = '';
+                
+                // Обработка команд
+                switch(command) {
+                    case 'help':
+                        alert('Доступные команды:\n\n' +
+                              'help - показать эту справку\n' +
+                              'clear - очистить терминал\n' +
+                              'report - перейти к сводному отчету\n' +
+                              'anomalies - перейти к классификации аномалий\n' +
+                              'chronology - перейти к хронологии событий\n' +
+                              'structure - перейти к организационной структуре\n' +
+                              'nokvist - перейти к информации о Ноквистском филиале\n' +
+                              'glossary - перейти к глоссарию терминов\n' +
+                              'files - открыть файловый менеджер\n' +
+                              'scan - запустить диагностику систем\n' +
+                              'reboot - перезагрузить терминал');
+                        break;
+                        
+                    case 'clear':
+                        const contentElement = document.querySelector('.terminal-content');
+                        contentElement.innerHTML = '<div class="content-section active" id="main-report"><div class="content-title">ТЕРМИНАЛ ОЧИЩЕН</div><div class="content-text">Введите команду для продолжения работы. Используйте команду "help" для получения списка доступных команд.</div></div>';
+                        
+                        // Добавляем обратно командную строку
+                        const commandLine = document.createElement('div');
+                        commandLine.className = 'command-line';
+                        commandLine.innerHTML = '<span class="command-prompt">ГНК://ФАНТОМ-ТЕРМИНАЛ/СИ-08&gt;</span><input type="text" class="command-input" id="command-input" placeholder="Введите команду (help для справки)" autocomplete="off">';
+                        contentElement.appendChild(commandLine);
+                        
+                        // Перепривязываем обработчик событий
+                        document.getElementById('command-input').addEventListener('keyup', arguments.callee);
+                        document.getElementById('command-input').focus();
+                        break;
+                        
+                    case 'files':
+                        showPasswordModal();
+                        break;
+                        
+                    case 'scan':
+                        alert('Запуск диагностики систем...\n\n' +
+                              'ТЕНЕСКАН: ОНЛАЙН (стабильно)\n' +
+                              'НОКСОМ: ВОССТАНОВЛЕНИЕ (72%)\n' +
+                              'ГЛОССАРИЙ: ОНЛАЙН (стабильно)\n' +
+                              'ЭРЕБ-7: ОФФЛАЙН (технические работы)\n' +
+                              'ФАНТОМ-ТЕРМИНАЛ: ОНЛАЙН (стабильно)\n\n' +
+                              'Диагностика завершена. Критических ошибок не обнаружено.');
+                        break;
+                        
+                    case 'reboot':
+                        if (confirm('Вы уверены, что хотите перезагрузить терминал? Весь несохраненный прогресс будет потерян.')) {
+                            location.reload();
+                        }
+                        break;
+                        
+                    case '':
+                        // Пустая команда - ничего не делать
+                        break;
+                        
+                    default:
+                        alert(`Неизвестная команда: "${command}". Введите "help" для получения списка доступных команд.`);
+                }
+            }
+        });
+        
+        // Запуск загрузки при загрузке страницы
         window.addEventListener('load', () => {
+            // Небольшая задержка для плавного старта
             setTimeout(bootSystem, 500);
         });
     </script>
