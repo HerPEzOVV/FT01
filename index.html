@@ -2,10 +2,9 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ГНК КИППТ // Секретный архив</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚠️</text></svg>">
     <style>
+        /* Стили остаются без изменений, как в предыдущей версии */
         body {
             background-color: #0A1A2F;
             color: #00FF00;
@@ -308,7 +307,7 @@
         <div class="login-screen" id="loginScreen">
             <div class="header">
                 <h1>◼◼◼◼◼◼◼◼◼◼◼◼◼ "◼◼◼◼"</h1>
-                <h2>закрытый исследовательский сервер // версия 2.0</h2>
+                <h2>закрытый исследовательский сервер // версия 2.1</h2>
             </div>
             <p>⚠️ ВНИМАНИЕ: СИСТЕМА СИНХРОНИЗАЦИИ С ГИТХАБ ⚠️</p>
             <p>Введите кодовое слово для авторизации:</p>
@@ -347,7 +346,7 @@
             
             <div class="footer">
                 ГНК КИППТ © 1995-1996 | СИНХРОНИЗАЦИЯ С РЕПОЗИТОРИЕМ<br>
-                ВЕРСИЯ: 2.0 | ПОСЛЕДНЯЯ СИНХРОНИЗАЦИЯ: <span id="lastSync">НИКОГДА</span>
+                ВЕРСИЯ: 2.1 | ПОСЛЕДНЯЯ СИНХРОНИЗАЦИЯ: <span id="lastSync">НИКОГДА</span>
             </div>
         </div>
     </div>
@@ -363,7 +362,7 @@
             PASSWORD: "ШифрЗима",
             STORAGE_KEY: "kippt_github_config",
             DATA_FILE: "kippt_data.json",
-            VERSION: "2.0"
+            VERSION: "2.1"
         };
         
         // Настройки GitHub
@@ -598,14 +597,14 @@
                     html += `
                         <div class="log-entry">
                             <button class="delete-btn" onclick="deleteLog('${log.id}')">✖</button>
-                            <h3>${log.title}</h3>
+                            <h3>${escapeHtml(log.title)}</h3>
                             <div class="date">
                                 ID: ${log.id} | ${log.date} | 
                                 <span style="color:${priorityColor}">${log.priority || 'NORMAL'}</span>
-                                ${log.author ? `| АВТОР: ${log.author}` : ''}
+                                ${log.author ? `| АВТОР: ${escapeHtml(log.author)}` : ''}
                             </div>
                             <div style="margin: 8px 0;">${tagsHtml}</div>
-                            <p style="white-space: pre-line;">${log.content}</p>
+                            <p style="white-space: pre-line;">${escapeHtml(log.content)}</p>
                         </div>
                     `;
                 });
@@ -677,7 +676,7 @@
                         <span style="color: ${entry.success ? '#00FF00' : '#FF0000'}">
                             ${entry.success ? 'УСПЕХ' : 'ОШИБКА'}
                         </span>
-                        ${entry.message ? `: ${entry.message}` : ''}
+                        ${entry.message ? `: ${escapeHtml(entry.message)}` : ''}
                     </div>
                 `).join('') :
                 '<p>История синхронизации пуста</p>';
@@ -736,16 +735,16 @@
                     </p>
                     
                     <label>GitHub Username:</label>
-                    <input type="text" id="configUsername" placeholder="Ваш GitHub username" value="${githubConfig.username || ''}">
+                    <input type="text" id="configUsername" placeholder="Ваш GitHub username" value="${escapeHtml(githubConfig.username || '')}">
                     
                     <label>Personal Access Token:</label>
-                    <input type="password" id="configToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" value="${githubConfig.token || ''}">
+                    <input type="password" id="configToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" value="${escapeHtml(githubConfig.token || '')}">
                     
                     <label>Repository Name:</label>
-                    <input type="text" id="configRepo" placeholder="username/repository" value="${githubConfig.repo || ''}">
+                    <input type="text" id="configRepo" placeholder="username/repository" value="${escapeHtml(githubConfig.repo || '')}">
                     
                     <label>Branch Name:</label>
-                    <input type="text" id="configBranch" placeholder="main" value="${githubConfig.branch || 'main'}">
+                    <input type="text" id="configBranch" placeholder="main" value="${escapeHtml(githubConfig.branch || 'main')}">
                     
                     <div style="margin: 20px 0;">
                         <label style="display: flex; align-items: center; gap: 10px;">
@@ -1086,7 +1085,7 @@
             }
         }
         
-        // Получить файл из GitHub
+        // Получить файл из GitHub - ФИКСИРОВАННАЯ ВЕРСИЯ
         async function getGitHubFile() {
             if (!githubConfig.enabled) return null;
             
@@ -1111,8 +1110,17 @@
                 }
                 
                 const data = await response.json();
-                const content = atob(data.content); // Декодируем base64
-                return JSON.parse(content);
+                
+                // ФИКС ДЛЯ КОДИРОВКИ: правильное декодирование base64 с UTF-8
+                const binaryString = atob(data.content);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+                
+                // Декодируем с правильной кодировкой
+                const text = new TextDecoder('utf-8').decode(bytes);
+                return JSON.parse(text);
                 
             } catch (error) {
                 console.error("Error getting GitHub file:", error);
@@ -1120,7 +1128,7 @@
             }
         }
         
-        // Загрузить данные в GitHub
+        // Загрузить данные в GitHub - ФИКСИРОВАННАЯ ВЕРСИЯ
         async function pushToGitHub() {
             if (!githubConfig.enabled) {
                 showSyncMessage("Синхронизация отключена", 'error');
@@ -1145,16 +1153,24 @@
                     
                     if (response.ok) {
                         const data = await response.json();
-                        sha = data.sha; // Нужен для обновления существующего файла
+                        sha = data.sha;
                     }
                 } catch (e) {
-                    // Файл не существует, это нормально
+                    // Файл не существует
                 }
                 
                 // 2. Подготавливаем данные
                 archiveData.lastModified = new Date().toISOString();
                 const content = JSON.stringify(archiveData, null, 2);
-                const encodedContent = btoa(unescape(encodeURIComponent(content)));
+                
+                // ФИКС ДЛЯ КОДИРОВКИ: правильное кодирование в base64
+                const encoder = new TextEncoder();
+                const bytes = encoder.encode(content);
+                let binaryString = '';
+                for (let i = 0; i < bytes.length; i++) {
+                    binaryString += String.fromCharCode(bytes[i]);
+                }
+                const encodedContent = btoa(binaryString);
                 
                 // 3. Отправляем запрос
                 const response = await fetch(
@@ -1169,7 +1185,7 @@
                         body: JSON.stringify({
                             message: `KIPPT Archive Sync: ${new Date().toLocaleString()}`,
                             content: encodedContent,
-                            sha: sha, // null для создания нового файла
+                            sha: sha,
                             branch: githubConfig.branch
                         })
                     }
@@ -1180,7 +1196,6 @@
                     throw new Error(errorData.message || `GitHub API error: ${response.status}`);
                 }
                 
-                // Успех
                 addSyncHistory('PUSH', true, `Загружено ${archiveData.logs.length} записей`);
                 return true;
                 
@@ -1222,7 +1237,6 @@
                     showSyncMessage("Файл данных на GitHub не найден", 'warning');
                 }
                 
-                // Обновляем интерфейс
                 updateLogsCount();
                 showSection('logs');
                 
@@ -1274,7 +1288,6 @@
             
             archiveData.syncHistory.unshift(entry);
             
-            // Ограничиваем историю 50 записями
             if (archiveData.syncHistory.length > 50) {
                 archiveData.syncHistory = archiveData.syncHistory.slice(0, 50);
             }
@@ -1385,9 +1398,16 @@
             return 'KIPPT_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
         }
         
+        // Экранирование HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
         // Настройка обработчиков событий
         function setupEventListeners() {
-            // Ввод пароля по Enter
             const passwordInput = document.getElementById('passwordInput');
             if (passwordInput) {
                 passwordInput.addEventListener('keypress', function(e) {
@@ -1397,7 +1417,7 @@
                 });
             }
             
-            // Анимация тряски при ошибке
+            // Анимация тряски
             const style = document.createElement('style');
             style.textContent = `
                 @keyframes shake {
@@ -1409,7 +1429,7 @@
             document.head.appendChild(style);
         }
         
-        // Запуск инициализации после загрузки DOM
+        // Запуск инициализации
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', init);
         } else {
