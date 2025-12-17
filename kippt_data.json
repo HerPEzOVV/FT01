@@ -27,7 +27,14 @@
       "priority": "MEDIUM"
     }
   ],
-  "lastModified": "2025-12-17T11:01:51.222Z",
+  "lastModified": "2025-12-17T11:01:55.744Z",
   "version": "2.0",
-  "syncHistory": []
+  "syncHistory": [
+    {
+      "timestamp": "2025-12-17T11:01:51.929Z",
+      "action": "PUSH",
+      "success": true,
+      "message": "Загружено 2 записей"
+    }
+  ]
 }
