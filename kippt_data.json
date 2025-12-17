@@ -25,11 +25,30 @@
       ],
       "author": "СИСТЕМНЫЙ АДМИНИСТРАТОР",
       "priority": "MEDIUM"
+    },
+    {
+      "id": "KIPPT_mj9wnobavjivp",
+      "title": "ТЕСТ СИСТЕМЫ СИНХРОНИЗАЦИИ",
+      "date": "17/12/2025",
+      "content": "НИКОЛАЙ СЕМгГА РАДИАТОР",
+      "author": "НЕИЗВ.",
+      "priority": "NORMAL",
+      "tags": [
+        "АРХИВ"
+      ],
+      "created": "2025-12-17T11:05:22.390Z",
+      "modified": "2025-12-17T11:05:22.390Z"
     }
   ],
-  "lastModified": "2025-12-17T11:01:55.744Z",
+  "lastModified": "2025-12-17T11:05:22.746Z",
   "version": "2.0",
   "syncHistory": [
+    {
+      "timestamp": "2025-12-17T11:01:56.391Z",
+      "action": "PUSH",
+      "success": true,
+      "message": "Загружено 2 записей"
+    },
     {
       "timestamp": "2025-12-17T11:01:51.929Z",
       "action": "PUSH",
